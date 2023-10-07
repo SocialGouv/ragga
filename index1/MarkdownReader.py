@@ -32,7 +32,6 @@ class MarkdownReader(BaseReader):
         """Init params."""
         super().__init__(*args, **kwargs)
         self.include_metas = include_metas
-        print(self.include_metas)
 
     def load_data(
         self,
@@ -40,9 +39,7 @@ class MarkdownReader(BaseReader):
         extra_info,
         # self, file: Path, extra_info: Optional[Dict] = None
     ) -> List[Document]:
-        # print(input_file, extra_info)
         """Parse file into string."""
-        # print("extra_info", extra_info)
         with open(input_file, encoding="utf-8") as f:
             content = f.read()
         markdown = frontmatter.loads(content)
@@ -64,13 +61,4 @@ class MarkdownReader(BaseReader):
                 **extra_info,
             }
         )
-
-        # print(post)
-        # if not post.metadata:
-        #     post.metadata["title"] = "xxx"
-        # return {"filename": filename} | post.metadata
-
-        # if extra_info:
-        #     metadata = {**metadata, **extra_info}
-
         return [Document(text=content, metadata=metadata)]

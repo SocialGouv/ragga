@@ -1,0 +1,4 @@
+- docs et questions notions
+- liste des SE par phase ou incubateur
+- gestion CSV notion
+- biug long markdown (>context)
