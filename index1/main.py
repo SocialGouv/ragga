@@ -3,7 +3,7 @@ from llama_index import SimpleDirectoryReader
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.readers.base import BaseReader
 
-
+from llama_index.node_parser.file.markdown import MarkdownNodeParser
 from MarkdownReader import MarkdownReader
 from llama_index.node_parser import SentenceWindowNodeParser
 import re
@@ -113,8 +113,9 @@ sources = [
 # )
 
 
-node_parser = SimpleNodeParser.from_defaults(chunk_size=1024, chunk_overlap=20)
+# node_parser = SimpleNodeParser.from_defaults(chunk_size=1024, chunk_overlap=20)
 
+node_parser = MarkdownNodeParser.from_defaults()
 
 # node_parser = SentenceWindowNodeParser.from_defaults(
 #     # text_splitter=text_splitter,
@@ -129,6 +130,9 @@ for source in sources:
     for doc in docs:
         nodes = node_parser.get_nodes_from_documents([doc])
         print(doc.metadata.get("filename"), len(nodes))
+        # for node in nodes:
+        #     print(node.metadata)
+        #     print(node.relationships)
         # print(doc.metadata)
         # print(dir(doc))
         # print(doc.json())
