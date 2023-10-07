@@ -8,6 +8,15 @@ from llama_index.schema import Document
 import frontmatter
 
 
+def dictStringValues(dct):
+    return dict(
+        map(
+            lambda x: (x, str(dct.get(x))),
+            dct,
+        )
+    )
+
+
 class MarkdownReader(BaseReader):
     """Markdown reader
 
@@ -35,7 +44,8 @@ class MarkdownReader(BaseReader):
         markdown = frontmatter.loads(content)
         metadata = {
             "filename": input_file.name,
-            "metadata": {**markdown.metadata, **extra_info},
+            **dictStringValues(markdown.metadata),
+            **extra_info,
         }
 
         # print(post)
