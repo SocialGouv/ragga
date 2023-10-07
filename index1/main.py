@@ -1,11 +1,15 @@
+from llama_index.callbacks import CallbackManager, LlamaDebugHandler, CBEventType
+
 import frontmatter
+from datetime import date
 from llama_index import SimpleDirectoryReader
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.readers.base import BaseReader
 from llama_index.prompts import PromptTemplate
-
+import json
+from pathlib import Path
 from llama_index.node_parser.file.markdown import MarkdownNodeParser
-from MarkdownReader import MarkdownReader, dictStringValues
+from MarkdownReader import MarkdownReader, dict_string_values
 from llama_index.node_parser import SentenceWindowNodeParser
 import re
 import chromadb
@@ -30,22 +34,22 @@ def get_file_metadata(filename):
     return {"filename": filename, **post.metadata}
 
 
-SreFilesMapping = {
+sre_files_mapping = {
     "content/support-sre/init/.*": {
-        "topics": [
+        "description": [
             "Présentation générale de la plateforme et des services technique de la fabrique"
         ],
     },
     "content/support-sre/infrastructure/.*": {
-        "topics": ["Questions sur l'infrastructure technique de la fabrique"],
+        "description": ["Questions sur l'infrastructure technique de la fabrique"],
     },
     "content/support-sre/standards/.*": {
-        "topics": [
+        "description": [
             "Questions sur les standards techniques et conventions de la fabrique"
         ],
     },
     "content/support-sre/workshops/.*": {
-        "topics": ["Workshops proposés aux développeurs(ses) de la fabrique"],
+        "description": ["Workshops proposés aux développeurs(ses) de la fabrique"],
     },
 }
 
@@ -53,23 +57,39 @@ SreFilesMapping = {
 def get_sre_metadata(filename):
     # print(filename)
     metadata = get_file_metadata(filename)
-    for path in SreFilesMapping.keys():
+    for path in sre_files_mapping.keys():
         if bool(re.match(path, filename)):
             return {
-                **dictStringValues(SreFilesMapping[path]),
+                **dict_string_values(sre_files_mapping[path]),
                 **metadata,
             }
     return metadata
 
 
+incubators = json.loads(Path("./index1/incubators.json").read_text())
+
+print(incubators.get("sgmas", {}).get("title"))
+
+
+def get_last_phase(metadata):
+    if metadata.get("phases"):
+        metadata.get("phases").sort(key=lambda x: x.get("start", date(1970, 1, 1)))
+        latest = metadata.get("phases")[-1]
+        return latest.get("name")
+    return None
+
+
 def get_se_metadata(filename):
     metadata = get_file_metadata(filename)
-    return {
+    result = {
         "title": metadata.get("title"),
         "description": metadata.get("mission"),
-        "incubateur": metadata.get("incubator"),
+        "incubateur": incubators.get(metadata.get("incubator"), {}).get("title"),
+        "phase": get_last_phase(metadata)
         # "sponsors": metadata.get("sponsors"),
     }
+    # print(filename, result)
+    return result
 
 
 def get_documents(source):
@@ -77,7 +97,7 @@ def get_documents(source):
         input_dir=source.get("path"),
         required_exts=[".md"],
         recursive=True,
-        file_extractor={".md": MarkdownReader},
+        file_extractor={".md": MarkdownReader(source.get("include_metas", []))},
         file_metadata=source.get("file_metadata"),
     )
     # use MarkdownReader and split top-level paragraphs into documents
@@ -101,17 +121,21 @@ sources = [
         "id": "startups-beta-gouv",
         "topics": [
             "Questions concernant les startups beta.gouv",
-            "Questions concernant les startups de la fabrique numérique",
         ],
         "path": "./content/startups",
         "file_metadata": get_se_metadata,
+        "include_metas": ["contact"],
         "examples": [
-            "Aide dans mon parcours administratif",
-            "Reconnaissance d'image",
-            "Formation continue",
-            "c'est quoi MonAideCyber ?",
-            "cybersécurité",
-            "startups dans l'écologie",
+            # "Aide dans mon parcours administratif",
+            # "Reconnaissance d'image",
+            # "Formation continue",
+            # "c'est quoi MonAideCyber ?",
+            # "cybersécurité",
+            # "liste des startups de l'incubateur de l'écologie",
+            # "liste des startups de l'incubateur de la DINUM",
+            "Liste des startups en phase de transfert",
+            "Liste des startups en phase d'investigation",
+            "Liste des startups en phase d'acceleration",
         ],
     },
     {
@@ -192,9 +216,15 @@ chroma_client = chromadb.PersistentClient(path="./chroma_db")
 #     # model_kwargs={"torch_dtype": torch.float16}
 # )
 
+
+llama_debug = LlamaDebugHandler(print_trace_on_end=True)
+callback_manager = CallbackManager([llama_debug])
+
+
 service_context = ServiceContext.from_defaults(
     # chunk_size=512,
     # embed_model=embed_model,
+    callback_manager=callback_manager,
     node_parser=node_parser,
     # llm=llm,
 )
@@ -206,12 +236,14 @@ for source in sources:
         chroma_collection = chroma_client.get_collection(source.get("id"))
         print("==> Collection {} already exist\n\n".format(source.get("id")))
     except ValueError:
+        nodes = node_parser.get_nodes_from_documents(docs)
+        print("NODE metadata", nodes[-1].metadata)
         chroma_collection = chroma_client.create_collection(source.get("id"))
         vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
         # for doc in docs:
         #    print(doc.metadata)
-        nodes = node_parser.get_nodes_from_documents(docs)
+
         # for node in nodes:
         # print(node.metadata)
         #     nodes = node_parser.get_nodes_from_documents([doc], show_progress=True)
@@ -236,6 +268,10 @@ for source in sources:
             docs, storage_context=storage_context, service_context=service_context
         )
         print(f"==> Loaded {len(docs)} docs\n\n")
+        # print(nodes[-1])
+
+        # print("DOC metadata", docs[-1].metadata)
+        print("\n\n")
     finally:
         vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
         index = VectorStoreIndex.from_vector_store(vector_store)
@@ -245,3 +281,5 @@ for source in sources:
         response = query_engine.query(query)
         print("\n", source.get("id"), ":", query)
         print(str(response))
+        print((response.get_formatted_sources()))
+        # print((response.source_nodes))
