@@ -1,0 +1,10 @@
+{
+  "name": "fetch-notion",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@notionhq/client": "^2.2.13",
+    "notion-to-md": "^3.1.1"
+  }
+}

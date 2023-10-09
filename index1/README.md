@@ -6,12 +6,14 @@ ragga stores your content and exposes a semantic search API based on vectore emb
 
 ## Todo
 
-- docs et questions notions
-- liste des SE par phase ou incubateur
-- gestion CSV notion
-- biug long markdown (>context)
+- gestion CSV notion ?
+- cite sources and urls
+- bug long markdown (>context)
+- agents & multi-query
+- query refiner
+- eval
 
 ## Secret sauce
 
 - llama_index
-- customie your files metadata
+- customie files metadata

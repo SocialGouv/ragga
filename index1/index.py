@@ -50,22 +50,26 @@ def index_source(chroma_client, source: Source):
         chroma_collection = chroma_client.get_collection(source.get("id"))
         logger.info("==> Collection {} already exist\n\n".format(source.get("id")))
     except ValueError:
-        nodes = node_parser.get_nodes_from_documents(docs)
+        nodes = node_parser.get_nodes_from_documents(docs, show_progress=True)
         chroma_collection = chroma_client.create_collection(source.get("id"))
         vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
+        # todo: show nodes content length
         logger.info(
             "index {} documents and {} nodes in {}".format(
                 len(docs), len(nodes), source.get("id")
             )
         )
         index = VectorStoreIndex.from_documents(
-            docs, storage_context=storage_context, service_context=service_context
+            docs, storage_context=storage_context, service_context=service_context, show_progress=True
         )
         logger.info(f"==> Loaded {len(docs)} docs\n\n")
+        if source.get("on_finish"):
+            source.get("on_finish", lambda a, b: None)(docs, index) # lambda for typings
     finally:
         vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
         index = VectorStoreIndex.from_vector_store(vector_store)
+
     return index
 
 
