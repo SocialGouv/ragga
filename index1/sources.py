@@ -1,6 +1,7 @@
 import logging
-
-from llama_index.node_parser.simple import SimpleNodeParser
+import re
+import json
+import frontmatter
 
 from datetime import date
 from pathlib import Path
@@ -11,9 +12,6 @@ from MarkdownReader import  dict_string_values
 
 logger = logging.getLogger()
 
-import re
-import json
-import frontmatter
 
 
 Source = TypedDict(
