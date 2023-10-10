@@ -4,6 +4,7 @@ import chromadb
 from llama_index.vector_stores import ChromaVectorStore
 from llama_index import VectorStoreIndex
 
+from sources import sources
 
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 chroma_collection = chroma_client.get_collection("startups-beta")
@@ -12,11 +13,13 @@ index = VectorStoreIndex.from_vector_store(vector_store)
 
 #index = load_data()
 
+sources_list = map(lambda source: " - [{}]({})".format(source.get("title"), source.get("url")),sources)
+
 
 st.set_page_config(page_title="LlamaIndex + OpenAI + Markdown = ❤️", page_icon="🐫", layout="centered", initial_sidebar_state="auto", menu_items=None)
 st.header("LlamaIndex + OpenAI + Markdown = ❤️")
 st.title("Interrogez la doc de la fabrique, powered by LlamaIndex 💬🦙")
-st.info("Détail des sources utilisées\n - documentation SRE\n - documentation beta.gouv\n - startups beta.gouv\n - standup fabrique\n - notion fabrique", icon="💡")
+st.info("Détail des sources utilisées : \n\n{}".format("\n".join(sources_list)), icon="💡")
 
 
 if "messages" not in st.session_state.keys():  # Initialize the chat message history
@@ -50,37 +53,20 @@ for message in st.session_state.messages:  # Display the prior chat messages
 #             st.session_state.messages.append(message)  # Add response to message history
 
 
-
-
-# React to user input
 if st.session_state.messages[-1]["role"] != "assistant":
 
-    # Display user message in chat message container
-  #  with st.chat_message("user"):
-   #     st.markdown(user_prompt)
-
-    # Add user message to chat history
-    #st.session_state.messages.append({"role": "user", "content": user_prompt})
-
-    #with st.spinner("Finding context..."):
-    #    subquery_response, md_outputs = generative_search_engine_iter(user_prompt, index, df, K)
-
-    # Display assistant response in chat message container
     with st.chat_message("assistant"):
+        with st.spinner("Je refléchis..."):
+            message_placeholder = st.empty()
 
-        message_placeholder = st.empty()
+            streaming_response = chat_engine.stream_chat(prompt)
+            full_response = ""
+            for text in streaming_response.response_gen:
+                full_response += text
+                message_placeholder.markdown(full_response)
 
-        streaming_response = chat_engine.stream_chat(prompt)
-        full_response = ""
-        for text in streaming_response.response_gen:
-            full_response += text
-            message_placeholder.markdown(full_response)
 
-        #for line in md_outputs:
-         #   st.markdown(line)
+            st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
-
-if st.button("Reset chat engine's memory"):
+if st.button("Recommencer"):
     chat_engine.reset()

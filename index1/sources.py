@@ -36,6 +36,8 @@ Source = TypedDict(
     {
         "id": str,
         "path": str,
+        "title": str,
+        "url": str,
         "file_metadata": NotRequired[Callable],
         "include_metas": NotRequired[List[str]],
         "examples": NotRequired[List[str]],
@@ -140,6 +142,8 @@ sources: List[Source] = [
     # },
     {
         "id": "startups-beta",
+        "title": "Startups beta.gouv",
+        "url": "https://beta.gouv.fr/startups/",
         # "topics": [
         #     "Questions concernant les startups beta.gouv",
         # ],
@@ -174,6 +178,8 @@ sources: List[Source] = [
     },
     {
         "id": "support-sre-fabrique",
+        "title": "Support technique de la fabrique",
+        "url": "https://socialgouv.github.io/support",
         # "topics": [
         #     "Questions techniques sur le fonctionnent de l'hebergement",
         #     "Questions sur kubernetes et la plateforme de la fabrique",
@@ -188,6 +194,8 @@ sources: List[Source] = [
     },
     {
         "id": "documentation-beta",
+        "title": "Documentation beta.gouv",
+        "url": "https://doc.incubateur.net/",
         # "topics": [
         #     "Questions sur la méthodologie startups d'état",
         #     "Questions sur le fonctionnement, les outils pour gérer sa startup",
@@ -203,6 +211,8 @@ sources: List[Source] = [
     },
     {
         "id": "notion-fabrique",
+        "title": "Notion de la fabrique",
+        "url": "https://www.notion.so/fabnummas",
         # "topics": [
         #     "Questions sur la méthodologie startups d'état",
         #     "Questions sur le fonctionnement, les outils pour gérer sa startup",
@@ -226,6 +236,8 @@ sources: List[Source] = [
     },
     {
         "id": "incubators-beta",
+        "title": "Incubateurs beta.gouv",
+        "url": "https://beta.gouv.fr/incubateurs/",
         # "topics": [
         #     "Questions concernant les startups beta.gouv",
         # ],
@@ -238,6 +250,10 @@ sources: List[Source] = [
     },
     {
         "id": "organisations-beta",
+        "title": "Organisations beta.gouv",
+        "url": "https://beta.gouv.fr/incubateurs/",
+
+
         # "topics": [
         #     "Questions concernant les startups beta.gouv",
         # ],
@@ -251,6 +267,8 @@ sources: List[Source] = [
     },
     {
         "id": "standup-fabrique",
+        "title": "Standup de la fabrique",
+        "url": "https://standup.fabrique.social.gouv.fr",
         # "topics": [
         #     "Questions concernant les startups beta.gouv",
         # ],
