@@ -152,7 +152,8 @@ sources: List[Source] = [
             "Quelles sont les startups du GIP de l'inclusion ?",
             "Quelles startups dans le domaine de l'armée ?",
             "combien de startups en tout ?",
-            "combien de startups chez beta en tout ?"
+            "combien de startups chez beta en tout ?",
+            "ou en est la startup domifa ?"
             # "Aide dans mon parcours administratif",
             # "Reconnaissance d'image",
             # "Formation continue",
@@ -246,6 +247,23 @@ sources: List[Source] = [
         "examples":[
             "c'est quoi la SGDSN ?",
             "c'est quoi CSAPA ?"
+        ]
+    },
+    {
+        "id": "standup-fabrique",
+        # "topics": [
+        #     "Questions concernant les startups beta.gouv",
+        # ],
+        "path": "./content7/standup-fabrique",
+        #"file_metadata": get_se_metadata,
+        #"include_metas": ["title", "contact", "website"],
+        "examples":[
+            "Quelles sont les KPIs des SRE ?",
+            "Quelles sont les KPIs de EgaPro ?",
+            "Quelles sont les KPIs de Code du travail ?",
+            "Quels sont les besoins de domifa ?",
+            "Quels sont l'actu d'archifiltre ?",
+            "Combien de visites sur le code du travail ?",
         ]
     },
     #  {

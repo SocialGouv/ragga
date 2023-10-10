@@ -12,6 +12,7 @@ ragga stores your content and exposes a semantic search API based on vectore emb
 - agents & multi-query
 - query refiner
 - eval
+- intégrer matomo
 
 ## Secret sauce
 
