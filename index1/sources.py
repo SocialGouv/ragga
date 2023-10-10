@@ -148,12 +148,12 @@ sources: List[Source] = [
         "include_metas": ["contact"],
         "on_finish": beta_se_postprocessor,
         "examples": [
-            "Quelles startups dans le domaine de l'éducation ?",
-            "Quelles sont les startups du GIP de l'inclusion ?",
-            "Quelles startups dans le domaine de l'armée ?",
-            "combien de startups en tout ?",
-            "combien de startups chez beta en tout ?",
-            "ou en est la startup domifa ?"
+      #      "Quelles startups dans le domaine de l'éducation ?",
+       #     "Quelles sont les startups du GIP de l'inclusion ?",
+        #    "Quelles startups dans le domaine de l'armée ?",
+         #   "combien de startups en tout ?",
+          #  "combien de startups chez beta en tout ?",
+           # "ou en est la startup domifa ?"
             # "Aide dans mon parcours administratif",
             # "Reconnaissance d'image",
             # "Formation continue",
@@ -211,8 +211,8 @@ sources: List[Source] = [
         "path": "./content/notion-fabrique",
         # "file_metadata": get_file_metadata,
         "examples": [
-            "c'est quoi CSAPA ?",
-            "qui gere les sujets infrastructure a la fabrique ?"
+          #  "c'est quoi CSAPA ?",
+          #  "qui gere les sujets infrastructure a la fabrique ?"
             # "que fait la fabrique ?",
             # "comment est organisée la fabrique ?",
             # "quelles sont les valeurs de la fabrique ?",
@@ -233,7 +233,7 @@ sources: List[Source] = [
         #"file_metadata": get_se_metadata,
         "include_metas": ["title", "contact", "website"],
         "examples":[
-            "c'est quoi l'ADEME ?"
+           # "c'est quoi l'ADEME ?"
         ]
     },
     {
@@ -245,8 +245,8 @@ sources: List[Source] = [
         #"file_metadata": get_se_metadata,
         #"include_metas": ["title", "contact", "website"],
         "examples":[
-            "c'est quoi la SGDSN ?",
-            "c'est quoi CSAPA ?"
+            # "c'est quoi la SGDSN ?",
+            # "c'est quoi CSAPA ?"
         ]
     },
     {
@@ -258,12 +258,12 @@ sources: List[Source] = [
         #"file_metadata": get_se_metadata,
         #"include_metas": ["title", "contact", "website"],
         "examples":[
-            "Quelles sont les KPIs des SRE ?",
-            "Quelles sont les KPIs de EgaPro ?",
-            "Quelles sont les KPIs de Code du travail ?",
-            "Quels sont les besoins de domifa ?",
-            "Quels sont l'actu d'archifiltre ?",
-            "Combien de visites sur le code du travail ?",
+            # "Quelles sont les KPIs des SRE ?",
+            # "Quelles sont les KPIs de EgaPro ?",
+            # "Quelles sont les KPIs de Code du travail ?",
+            # "Quels sont les besoins de domifa ?",
+            # "Quels sont l'actu d'archifiltre ?",
+            # "Combien de visites sur le code du travail ?",
         ]
     },
     #  {

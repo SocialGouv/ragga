@@ -2,7 +2,7 @@ import sys
 
 import logging
 import chromadb
-
+import streamlit as st
 
 from llama_index import SimpleDirectoryReader, VectorStoreIndex
 from llama_index.vector_stores import ChromaVectorStore
@@ -74,8 +74,7 @@ def index_source(chroma_client, source: Source):
 
 
 
-def debug_source(source):
-    index = index_source(chroma_client, source)
+def debug_source(index, source):
     query_engine = index.as_query_engine()
     for query in source.get("examples", []):
         response = query_engine.query(query)
@@ -85,11 +84,16 @@ def debug_source(source):
         # print((response.source_nodes))
         print("\n-------------")
 
-def debug_sources():
+#@st.cache_resource(show_spinner=False) 
+def index_sources(sources):
+    logger.info("Indexing sources...")
+    indices = []
     for source in sources:
-        debug_source(source)
-        
-
+        logger.info("Indexing {}".format(source.get("id")))
+        index = index_source(chroma_client, source)
+       # debug_source(index, source)
+        indices.append(index)
+    return indices
 
 node_parser = MarkdownNodeParser.from_defaults()
 
@@ -97,10 +101,10 @@ chroma_client = chromadb.PersistentClient(path="./chroma_db")
 
 # use OpenAI by default
 service_context = ServiceContext.from_defaults(
-    chunk_size=4096,
+    chunk_size=512,
     # embed_model=embed_model,
     node_parser=node_parser,
     # llm=llm,
 )
 
-debug_sources()
+index_sources(sources)
