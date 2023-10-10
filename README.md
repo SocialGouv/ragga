@@ -1,12 +1,10 @@
-# ragga
+# rag demo
 
-ragga stores your content and exposes a semantic search API based on vectore embeddings.
-
-## Features
+Expose a llamai-index chat with streamlit.
 
 ## Todo
 
-- gestion CSV notion ?
+- gestion CSV ?
 - cite sources and urls
 - bug long markdown (>context)
 - agents & multi-query
@@ -17,4 +15,5 @@ ragga stores your content and exposes a semantic search API based on vectore emb
 ## Secret sauce
 
 - llama_index
-- customie files metadata
+- customise files metadata
+- generate additional content

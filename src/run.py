@@ -15,12 +15,10 @@ index = VectorStoreIndex.from_vector_store(vector_store)
 
 sources_list = map(lambda source: " - [{}]({})".format(source.get("title"), source.get("url")),sources)
 
-
 st.set_page_config(page_title="LlamaIndex + OpenAI + Markdown = ❤️", page_icon="🐫", layout="centered", initial_sidebar_state="auto", menu_items=None)
 st.header("LlamaIndex + OpenAI + Markdown = ❤️")
 st.title("Interrogez la doc de la fabrique, powered by LlamaIndex 💬🦙")
 st.info("Détail des sources utilisées : \n\n{}".format("\n".join(sources_list)), icon="💡")
-
 
 if "messages" not in st.session_state.keys():  # Initialize the chat message history
     st.session_state.messages = [
@@ -70,3 +68,4 @@ if st.session_state.messages[-1]["role"] != "assistant":
 
 if st.button("Recommencer"):
     chat_engine.reset()
+    del st.session_state["messages"]

@@ -22,7 +22,7 @@ stream_handler.setLevel(logging.INFO)
 file_handler = logging.FileHandler("logs.log")
 file_handler.setLevel(logging.DEBUG)
 
-logger.addHandler(file_handler)
+#logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 
 

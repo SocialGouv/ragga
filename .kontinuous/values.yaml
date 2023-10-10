@@ -1,0 +1,24 @@
+app:
+  ~chart: app
+  containerPort: 8501
+  probesPath: /_stcore/health
+  ~needs: [build-app]
+  envFrom:
+    - secretRef:
+        name: openai
+    - secretRef:
+        name: notion
+  env:
+    - name: ANONYMIZED_TELEMETRY
+      value: "False"
+    - name: STREAMLIT_BROWSER_GATHER_USAGE_STATS
+      value: "False"
+
+jobs:
+  runs:
+    build-app:
+      use: build
+      with:
+        imagePackage: app
+        buildArgs:
+          COMMIT_SHA: "{{ $.Values.global.sha }}"
