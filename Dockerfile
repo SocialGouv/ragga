@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     software-properties-common \
     git \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip \
@@ -16,12 +17,24 @@ RUN pip install --upgrade pip \
 
 COPY pyproject.toml /app
 
-#RUN poetry config settings.virtualenvs.create false
 RUN poetry install --no-interaction --no-dev
+
+RUN groupadd -g 1001 app && \
+    useradd -r -u 1001 -g app app -d /app
 
 COPY . /app
 
+RUN chown -R app:app /app
+
+RUN npm install -g tiged yarn
+RUN cd notion-dump && yarn
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
-ENTRYPOINT ["streamlit", "run", "./src/run.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+ENV VIRTUAL_ENVIRONMENT_PATH="/app/.venv"
+ENV PATH="$VIRTUAL_ENVIRONMENT_PATH/bin:$PATH"
+
+USER 1001
+
+ENTRYPOINT ["./entrypoint.sh"]

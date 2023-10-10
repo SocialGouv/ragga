@@ -6,15 +6,11 @@ OUT="./content"
 
 mkdir "$OUT" || true
 
-npx --yes tiged -f https://github.com/betagouv/doc.incubateur.net-communaute "$OUT/documentation-beta" && rm -rf "$OUT/documentation-beta/.git" 
-npx --yes tiged -f https://github.com/betagouv/beta.gouv.fr/content/_incubators "$OUT/incubators-beta" && rm -rf "$OUT/incubators-beta/.git" 
-npx --yes tiged -f https://github.com/betagouv/beta.gouv.fr/content/_startups "$OUT/startups-beta" && rm -rf "$OUT/startups-beta/.git" 
-npx --yes tiged -f https://github.com/betagouv/beta.gouv.fr/content/_organisations "$OUT/organisations-beta" && rm -rf "$OUT/organisations-beta/.git" 
-npx --yes tiged -f https://github.com/socialgouv/support/docs "$OUT/support-sre-fabrique" && rm -rf "$OUT/support-sre-fabrique/.git" 
-
-cd notion-dump && yarn
-
-cd ..
+tiged https://github.com/betagouv/doc.incubateur.net-communaute "$OUT/documentation-beta" && rm -rf "$OUT/documentation-beta/.git" 
+tiged https://github.com/betagouv/beta.gouv.fr/content/_incubators "$OUT/incubators-beta" && rm -rf "$OUT/incubators-beta/.git" 
+tiged https://github.com/betagouv/beta.gouv.fr/content/_startups "$OUT/startups-beta" && rm -rf "$OUT/startups-beta/.git" 
+tiged https://github.com/betagouv/beta.gouv.fr/content/_organisations "$OUT/organisations-beta" && rm -rf "$OUT/organisations-beta/.git" 
+tiged https://github.com/socialgouv/support/docs "$OUT/support-sre-fabrique" && rm -rf "$OUT/support-sre-fabrique/.git" 
 
 mkdir "$OUT/notion-fabrique" || true
 
@@ -34,7 +30,7 @@ node notion-dump/dump.js 2107393f35c849e697bbb72423a877c2 > "$OUT/notion-fabriqu
 node notion-dump/dump.js cce1bf7285c1457ab2cc78b8e5d726a8 > "$OUT/notion-fabrique/Mission, Vision, Valeurs.md" 
 node notion-dump/dump.js 4fcee800ae7d4abc9c59e0537b3e3335 > "$OUT/notion-fabrique/OPS et SRE.md" 
 # node notion-dump/dump.js b9bf84869eb94da4bb1b251f5cd5ee2f > "$OUT/notion-fabrique/agrément SIG pour obtenir des noms de domaine.md"  #confidential
-
+node notion-dump/dump.js 7db7efeb28f0486c9b2f3a0cf4df16b8 > "$OUT/notion-fabrique/Plateforme - offre de valeur.md" 
 
 OUTPATH="$OUT/standup-fabrique"
     mkdir "$OUTPATH" || true

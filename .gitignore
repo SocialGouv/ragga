@@ -1,2 +1,4 @@
 node_modules
 __pycache__
+content
+chroma_db

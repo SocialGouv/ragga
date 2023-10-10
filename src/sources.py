@@ -92,7 +92,7 @@ def get_last_phase(metadata):
     return None
 
 
-incubators = json.loads(Path("./index1/incubators.json").read_text())
+incubators = json.loads(Path("./src/incubators.json").read_text())
 
 
 def get_se_metadata(filename):
