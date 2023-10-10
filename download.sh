@@ -14,6 +14,7 @@ tiged https://github.com/socialgouv/support/docs "$OUT/support-sre-fabrique" && 
 
 mkdir "$OUT/notion-fabrique" || true
 
+echo "> downloading notion content"
 # NEED NOTION_TOKEN env
 node notion-dump/dump.js bb52915dfbe747419c4c914921fc19d4 > "$OUT/notion-fabrique/La fabrique in a nutshell.md" 
 node notion-dump/dump.js df455e8378cb4b1c88c72ce38150459d > "$OUT/notion-fabrique/Firebase.md" 
@@ -35,6 +36,7 @@ node notion-dump/dump.js 7db7efeb28f0486c9b2f3a0cf4df16b8 > "$OUT/notion-fabriqu
 OUTPATH="$OUT/standup-fabrique"
     mkdir "$OUTPATH" || true
 
+echo "> downloading standup content"
 curl 'https://hasura-carnets.fabrique.social.gouv.fr/v1/graphql' \
   -H 'content-type: application/json' \
   --data-raw '{"query":"{\n  posts(\n    distinct_on: team_slug,\n    order_by: {team_slug: asc, created_at: desc}\n    where: {team_slug: {_nin: [\"fce\", \"transition-collective\", \"dora\", \"emjpm\", \"carnet-de-bord\", \"nos1000jours\", \"enfants-du-spectacle\"]}}\n  ) {\n    id\n    mood\n    term\n    needs\n    author\n    team_slug\n    priorities\n    created_at\n    team {\n      name\n      privacy\n      avatarUrl\n      description\n      parentTeam {\n        name\n      }\n      members(first: 100) {\n        nodes {\n          login\n          name\n          avatarUrl\n        }\n      }\n    }\n    kpis {\n      id\n      value\n      name\n    }\n  }\n}"}' \
