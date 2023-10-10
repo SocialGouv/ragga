@@ -2,7 +2,7 @@
 
 set -e
 
-OUT="./content9"
+OUT="./content"
 
 mkdir "$OUT" || true
 
@@ -33,7 +33,7 @@ node notion-dump/dump.js be5eaa1809744da0a7ed1dd01935aa75 > "$OUT/notion-fabriqu
 node notion-dump/dump.js 2107393f35c849e697bbb72423a877c2 > "$OUT/notion-fabrique/homologation securité rgs.md" 
 node notion-dump/dump.js cce1bf7285c1457ab2cc78b8e5d726a8 > "$OUT/notion-fabrique/Mission, Vision, Valeurs.md" 
 node notion-dump/dump.js 4fcee800ae7d4abc9c59e0537b3e3335 > "$OUT/notion-fabrique/OPS et SRE.md" 
-node notion-dump/dump.js b9bf84869eb94da4bb1b251f5cd5ee2f > "$OUT/notion-fabrique/agrément SIG pour obtenir des noms de domaine.md" 
+# node notion-dump/dump.js b9bf84869eb94da4bb1b251f5cd5ee2f > "$OUT/notion-fabrique/agrément SIG pour obtenir des noms de domaine.md"  #confidential
 
 
 OUTPATH="$OUT/standup-fabrique"
