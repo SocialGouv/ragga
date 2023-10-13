@@ -29,10 +29,9 @@ if "messages" not in st.session_state.keys():  # Initialize the chat message his
             "content": "Bonjour, je suis l'assistant de la fabrique, posez-moi vos questions!",
         }
     ]
-# 3.4. Create the chat engine
-chat_engine = index.as_chat_engine(chat_mode="context", verbose=True)
 
-# 3.5. Prompt for user input and display message history
+chat_engine = index.as_chat_engine(chat_mode="context", verbose=True, similarity_top_k=5)
+
 if prompt := st.chat_input("A votre écoute :)"):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
