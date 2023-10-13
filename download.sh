@@ -51,7 +51,13 @@ while IFS=$'\n' read -r c; do
     term=$(echo "$c" | jq -r '.term')
     ([ "$privacy" = "SECRET" ] || [ "$startup" = "null" ]) && continue # skip some
     OUTFILE="$OUTPATH/$team_slug.md"
-    echo "# Dernieres nouvelles de la startup $startup" > "$OUTFILE"
+    echo "---" > "$OUTFILE"
+    echo "" >> "$OUTFILE"
+    echo "title: Dernieres nouvelles de la startup $startup" >> "$OUTFILE"
+    echo "" >> "$OUTFILE"
+    echo "---" >> "$OUTFILE"
+    echo "" >> "$OUTFILE"
+    echo "# Dernieres nouvelles de la startup $startup" >> "$OUTFILE"
     echo "" >> "$OUTFILE"
     echo "Date: ${created_at:0:10}" >> "$OUTFILE"
     echo "" >> "$OUTFILE"

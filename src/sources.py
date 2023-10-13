@@ -51,7 +51,10 @@ Source = TypedDict(
 def get_file_metadata(filename):
     logger.debug("get_file_metadata: {}".format(filename))
     post = frontmatter.load(filename)
-    return {"filename": filename, **post.metadata}
+    logger.debug(post)
+    metadata = {"filename": filename, **post.metadata}
+    logger.debug(metadata)
+    return metadata
 
 
 sre_files_mapping = {
@@ -282,13 +285,13 @@ sources: List[Source] = [
         "id": "standup-fabrique",
         "title": "Standup de la fabrique",
         "url": "https://standup.fabrique.social.gouv.fr",
-        "description": "Questions concernant l'actualité des startups de la fabrique des ministeres sociaux" ,
+        "description": "Actualité des startups de la fabrique des ministeres sociaux : derniers chiffres, KPIS et évenements" ,
 
         # "topics": [
         #     "Questions concernant les startups beta.gouv",
         # ],
         "path": "./content/standup-fabrique",
-        #"file_metadata": get_se_metadata,
+        #"file_metadata": get_standup_metadata,
         #"include_metas": ["title", "contact", "website"],
         "examples":[
             # "Quelles sont les KPIs des SRE ?",

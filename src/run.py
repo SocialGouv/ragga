@@ -5,20 +5,22 @@ from llama_index.vector_stores import ChromaVectorStore
 from llama_index import VectorStoreIndex
 
 from sources import sources
+from index import index
 
-chroma_client = chromadb.PersistentClient(path="./chroma_db")
-chroma_collection = chroma_client.get_collection("standup-fabrique")
-vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
-index = VectorStoreIndex.from_vector_store(vector_store)
 
-#index = load_data()
+# chroma_client = chromadb.PersistentClient(path="./chroma_db")
+# chroma_collection = chroma_client.get_collection("standup-fabrique")
+# vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
+# index = VectorStoreIndex.from_vector_store(vector_store)
+
+# #index = load_data()
 
 sources_list = map(lambda source: " - [{}]({})".format(source.get("title"), source.get("url")),sources)
 
 st.set_page_config(page_title="LlamaIndex + OpenAI + Markdown = ❤️", page_icon="🐫", layout="centered", initial_sidebar_state="auto", menu_items=None)
 st.header("LlamaIndex + OpenAI + Markdown = ❤️")
 st.title("Interrogez la doc de la fabrique, powered by LlamaIndex 💬🦙")
-st.info("Détail des sources utilisées : \n\n{}".format("\n".join(sources_list)), icon="💡")
+st.info("Détail des sources utilisées : \n\n{}\n\n:warning: Pensez à préciser le nom de l'incubateur si la question lui est spécifique".format("\n".join(sources_list)), icon="💡")
 
 if "messages" not in st.session_state.keys():  # Initialize the chat message history
     st.session_state.messages = [
@@ -28,7 +30,7 @@ if "messages" not in st.session_state.keys():  # Initialize the chat message his
         }
     ]
 # 3.4. Create the chat engine
-chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
+chat_engine = index.as_chat_engine(chat_mode="context", verbose=True)
 
 # 3.5. Prompt for user input and display message history
 if prompt := st.chat_input("A votre écoute :)"):

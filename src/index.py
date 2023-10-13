@@ -27,11 +27,16 @@ logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 
 
-def get_all_metadata(source):
-    return lambda filename: {
+def get_filename_metadata(source, filename):
+    metadata = {
+        "source": source.get("description", source.get("title")),
         **source.get("file_metadata", get_file_metadata)(filename),
-        "source": source.get("description", source.get("title"))
     }
+    print(filename, metadata)
+    return metadata
+
+def get_all_metadata(source):
+    return lambda filename: get_filename_metadata(source, filename)
 
 def get_documents(source):
     """return Document for given source(path, file_metadata)"""
@@ -152,17 +157,3 @@ service_context = ServiceContext.from_defaults(
 )
 
 index = index_sources(sources)
-
-chat_engine = index.as_chat_engine(chat_mode="context", verbose=True)
-
-chat_engine.stream_chat("C'est quoi domifa ?").print_response_stream()
-
-while 1:
-    print("\n\n")
-    user_input = input('Prompt : ')
-    chat_engine.stream_chat(user_input).print_response_stream()
-
-
-# chat_engine.stream_chat("Qui contacter pour des questions relatives au RGPD ?").print_response_stream()
-# chat_engine.stream_chat("Quelles sont les valeurs cardinales de beta.gouv ?").print_response_stream()
-
