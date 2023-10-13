@@ -42,8 +42,9 @@ Source = TypedDict(
         "include_metas": NotRequired[List[str]],
         "examples": NotRequired[List[str]],
         "exclude": NotRequired[List[str]],
-        "on_finish": NotRequired[Callable],
-        "query_engine_description": NotRequired[str]
+        #"on_finish": NotRequired[Callable],
+        "additional_documents": NotRequired[Callable],
+        "description": NotRequired[str]
     },
 )
 
@@ -109,7 +110,7 @@ def get_se_metadata(filename):
     return result
 
 
-def beta_se_postprocessor(documents, index):
+def beta_se_postprocessor(documents):
     # create additionnal documents
 
     # build a markdown table
@@ -118,6 +119,7 @@ def beta_se_postprocessor(documents, index):
     
     selection = [{key: doc.metadata[key] for key in keys} for doc in documents]
     incubators = set(map(lambda a: a.get("incubator"), selection))
+    docs = []
     for incubator in incubators:
         statements=[]
         statements.append("# Liste des startups par phase de l'incubateur {}\n".format(incubator))
@@ -126,9 +128,11 @@ def beta_se_postprocessor(documents, index):
         for select in [select for select in selection if select.get("incubator")==incubator]:
             statements.append(" {} | {} ".format(select.get("title"), select.get("phase")))
 
-        print("\n".join(statements))
-        doc = Document(text="\n".join(statements), metadata={"title": "Liste des startups par phase de l'incubateur {}\n".format(incubator)}) 
-        index.insert(doc, service_context=service_context)
+        #print("\n".join(statements))
+        doc = Document(text="\n".join(statements), metadata={"source": "Startups de {}".format(incubator), "title": "Liste des startups par phase de l'incubateur {}".format(incubator)}) 
+        docs.append(doc)
+        #index.insert(doc, service_context=service_context)
+    return docs
 
 
 sources: List[Source] = [
@@ -151,8 +155,8 @@ sources: List[Source] = [
         "path": "./content/startups-beta",
         "file_metadata": get_se_metadata,
         "include_metas": ["contact"],
-        "on_finish": beta_se_postprocessor,
-        "query_engine_description": "Questions concernant les startups beta.gouv",
+        "additional_documents": beta_se_postprocessor,
+        "description": "Questions concernant les startups beta.gouv",
         "examples": [
       #      "Quelles startups dans le domaine de l'éducation ?",
        #     "Quelles sont les startups du GIP de l'inclusion ?",
@@ -182,7 +186,7 @@ sources: List[Source] = [
         "id": "support-sre-fabrique",
         "title": "Support technique de la fabrique",
         "url": "https://socialgouv.github.io/support",
-        "query_engine_description": "Questions concernant le support technique de la fabrique des ministères sociaux (socialgouv)",
+        "description": "Questions concernant le support technique de la fabrique des ministères sociaux (socialgouv)",
         # "topics": [
         #     "Questions techniques sur le fonctionnent de l'hebergement",
         #     "Questions sur kubernetes et la plateforme de la fabrique",
@@ -199,7 +203,7 @@ sources: List[Source] = [
         "id": "documentation-beta",
         "title": "Documentation beta.gouv",
         "url": "https://doc.incubateur.net/",
-        "query_engine_description": "Documentation générale, méthodologique et pratique sur le fonctionnement des startups d'état beta.gouv",
+        "description": "Questions sur la methodologie, les services outils, et le fonctionnement des startups d'état beta.gouv",
 
         # "topics": [
         #     "Questions sur la méthodologie startups d'état",
@@ -217,7 +221,7 @@ sources: List[Source] = [
     {
         "id": "notion-fabrique",
         "title": "Notion de la fabrique",
-        "query_engine_description": "Documentation spécifique au fonctionnement interne de la fabrique numérique des ministères sociaux et des personnes à contacter (SocialGouv)",
+        "description": "Questions concernant le fonctionnement interne de la fabrique numérique des ministères sociaux et des personnes à contacter (SocialGouv)",
         "url": "https://www.notion.so/fabnummas",
         # "topics": [
         #     "Questions sur la méthodologie startups d'état",
@@ -243,7 +247,7 @@ sources: List[Source] = [
     {
         "id": "incubators-beta",
         "title": "Incubateurs beta.gouv",
-        "query_engine_description": "Documentation sur les différents incubateurs de startups de beta.gouv",
+        "description": "Documentation sur les différents incubateurs de startups de beta.gouv",
 
         "url": "https://beta.gouv.fr/incubateurs/",
         # "topics": [
@@ -260,7 +264,7 @@ sources: List[Source] = [
         "id": "organisations-beta",
         "title": "Organisations beta.gouv",
         "url": "https://beta.gouv.fr/incubateurs/",
-        "query_engine_description": "Documentation sur les différentes organisations de startups de beta.gouv",
+        "description": "Documentation sur les différentes organisations de startups de beta.gouv",
 
 
         # "topics": [
@@ -278,7 +282,7 @@ sources: List[Source] = [
         "id": "standup-fabrique",
         "title": "Standup de la fabrique",
         "url": "https://standup.fabrique.social.gouv.fr",
-        "query_engine_description": "Toutes les dernières nouvelles des startups de la fabrique des ministeres sociaux avec le standup" ,
+        "description": "Questions concernant l'actualité des startups de la fabrique des ministeres sociaux" ,
 
         # "topics": [
         #     "Questions concernant les startups beta.gouv",

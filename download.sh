@@ -68,7 +68,7 @@ while IFS=$'\n' read -r c; do
         echo "" >> "$OUTFILE"
     fi
     if [ "$term" != "" ]; then
-        echo "## Priorités" >> "$OUTFILE"
+        echo "## Écheances" >> "$OUTFILE"
         echo "" >> "$OUTFILE"
         echo "$term" >> "$OUTFILE"
         echo "" >> "$OUTFILE"

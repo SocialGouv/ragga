@@ -7,7 +7,7 @@ from llama_index import VectorStoreIndex
 from sources import sources
 
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
-chroma_collection = chroma_client.get_collection("startups-beta")
+chroma_collection = chroma_client.get_collection("standup-fabrique")
 vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
 index = VectorStoreIndex.from_vector_store(vector_store)
 
@@ -51,6 +51,12 @@ for message in st.session_state.messages:  # Display the prior chat messages
 #             st.session_state.messages.append(message)  # Add response to message history
 
 
+#
+# query_engine = index.as_query_engine(streaming=True)
+# response = query_engine.query("What did the author do growing up?")
+# response.print_response_stream()
+#
+
 if st.session_state.messages[-1]["role"] != "assistant":
 
     with st.chat_message("assistant"):
@@ -58,6 +64,9 @@ if st.session_state.messages[-1]["role"] != "assistant":
             message_placeholder = st.empty()
 
             streaming_response = chat_engine.stream_chat(prompt)
+
+            # streaming_response.print_response_stream()
+
             full_response = ""
             for text in streaming_response.response_gen:
                 full_response += text
