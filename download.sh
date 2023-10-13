@@ -59,7 +59,7 @@ while IFS=$'\n' read -r c; do
     echo "" >> "$OUTFILE"
     echo "# Dernieres nouvelles de la startup $startup" >> "$OUTFILE"
     echo "" >> "$OUTFILE"
-    echo "Date: ${created_at:0:10}" >> "$OUTFILE"
+    echo "Date de mise à jour : ${created_at:0:10}" >> "$OUTFILE"
     echo "" >> "$OUTFILE"
     if [ "$needs" != "" ]; then
         echo "## Besoins" >> "$OUTFILE"

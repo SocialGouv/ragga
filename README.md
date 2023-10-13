@@ -1,19 +1,20 @@
-# rag demo
+# ragga
 
-Expose a llamai-index chat with streamlit.
+⚠️ experimental
+
+Expose a [llama-index](https://llamaindex.ai) chat with a [streamlit](https://streamlit.io/) UI.
+
+The service download and index files based on [./download.sh](./download.sh)
 
 ## Todo
 
-- gestion CSV ?
-- cite sources and urls
-- bug long markdown (>context)
-- agents & multi-query
-- query refiner
-- eval
-- intégrer matomo
+- gestion CSV/pandas
+- always cite sources and urls
+- add evaluation pipeline
+- données : matomo, github...
 
 ## Secret sauce
 
-- llama_index
-- customise files metadata
+- [llama-index](https://llamaindex.ai)
+- enhance files metadata
 - generate additional content
