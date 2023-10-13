@@ -13,7 +13,15 @@ app:
       value: "False"
     - name: STREAMLIT_BROWSER_GATHER_USAGE_STATS
       value: "False"
-
+  startupProbe:
+    failureThreshold: 60
+    httpGet:
+      path: /_stcore/health
+      port: http
+      scheme: HTTP
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
 jobs:
   runs:
     build-app:
