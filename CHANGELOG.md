@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/SocialGouv/ragga/compare/v1.0.0...v1.0.1) (2023-10-13)
+
+
+### Bug Fixes
+
+* add preprod secrets ([2612cd7](https://github.com/SocialGouv/ragga/commit/2612cd71051870dcd351c52f9cfab0a49bfb5e22))
+
 # 1.0.0 (2023-10-13)
 
 
