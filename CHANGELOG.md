@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/SocialGouv/ragga/compare/v1.0.3...v1.0.4) (2023-10-13)
+
+
+### Bug Fixes
+
+* docs ([cdbf03d](https://github.com/SocialGouv/ragga/commit/cdbf03d5f5856cd0d2395323aa1531ade326dce8))
+
 ## [1.0.3](https://github.com/SocialGouv/ragga/compare/v1.0.2...v1.0.3) (2023-10-13)
 
 
