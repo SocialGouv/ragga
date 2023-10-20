@@ -144,9 +144,10 @@ def get_rule_question(data):
     missingVariables = data.get("evaluate",[{}])[0].get("missingVariables", {})
     if missingVariables:
         key = list(missingVariables)[0]
-        print("call_publicodes key", key)
+        print("get_rule_question key", key)
         rule = get_publicodes_rule(key)
-        return rule.get("rawNode", {}).get("question", rule.get("title"))
+        print("get_rule_question rule", rule)
+        return rule
     return None
 
 def get_next_question(parametres_calcul: ParametresCalcul) -> str|None:
@@ -164,11 +165,15 @@ def get_next_question(parametres_calcul: ParametresCalcul) -> str|None:
     # get question text
     print("call_publicodes", json.dumps(data))
     
-    next_question = get_rule_question(data)
-    #if next_question:
-        #ParametresCalcul = TypedDict('ParametresCalcul', {'contrat salarié . ancienneté': int, 'contrat salarié . travailleur handicapé': bool})
-    print("next_question", next_question)
-    return next_question
+    next_question_rule = get_rule_question(data)
+    if next_question_rule:
+        next_question = next_question_rule.get("rawNode", {}).get("question", next_question_rule.get("title"))
+        next_name = next_question_rule.get("rawNode", {}).get("nom", next_question_rule.get("title"))
+        dictTypes = {**parametres_calcul2}
+        #ParametresCalcul = Dict[str, str]
+        print("next_question", next_question)
+        return next_question
+    return None
 
 def get_results(parametres_calcul: ParametresCalcul) -> int:
     """
@@ -213,6 +218,12 @@ get_next_question_tool_description="""
 Utilise cet outil pour calculer le préavis de retraite.
 Tant que la fonction te renvoie un résultat, poses la nouvelle question à l'utilisateur.
 Si la fonction ne renvoie pas de résultat, récapitules les questions posées et les réponses de l'utilisateur
+
+
+Les parametres de calcul possibles sont uniquement:
+    - "contrat salarié . ancienneté"
+    - "contrat salarié . travailleur handicapé"
+    - "contrat salarié . travailleur handicapé . lourd"
 """
 get_next_question_tool = FunctionTool.from_defaults(fn=get_next_question, description=get_next_question_tool_description) #, fn_schema=ParametresCalcul)
 get_results_tool = FunctionTool.from_defaults(fn=get_results)
@@ -225,7 +236,7 @@ agent = OpenAIAgent.from_tools(tools, verbose=True, system_prompt=PROMP_CONSEILL
 
 #print(r)
 
-print("\nex: Calcules moi mon préavis de retraite pour 24 mois d'anciennete\n")
+print("\nex: Calcules moi mon préavis de retraite pour 24 mois d'ancienneté\n")
 agent.chat_repl()
 
 
