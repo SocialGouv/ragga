@@ -58,14 +58,23 @@ def get_publicodes_rule(name):
 #     return next_question
 from typing import NotRequired, TypedDict
 from pydantic import BaseModel, create_model, Field
-from typing import List, Dict
-ParametresCalcul = TypedDict('ParametresCalcul', {'contrat salarié . ancienneté': int})
-#ParametresCalcul = TypedDict('ParametresCalcul', {'contrat salarié . ancienneté': int, 'contrat salarié . travailleur handicapé': bool})
+from typing import List, Dict, Optional
+#ParametresCalcul = Dict
+
+
+
+
+    # Les parametres de calcul possibles sont uniquement:
+    #     - "contrat salarié . ancienneté"
+    #     - "contrat salarié . travailleur handicapé"
+    #     - "contrat salarié . travailleur handicapé . lourd"
+#ParametresCalcul = Dict[str, str]
+ParametresCalcul = TypedDict('ParametresCalcul', {"contrat salarié . ancienneté": int})
 
 # class MyModel(BaseModel):
 #     __root__: Dict[str, List[str]]
 
-types = {'contrat salarié . ancienneté': 0}
+#types = {'contrat salarié . ancienneté': 0}
 
 # class GetNextQuestionModel(BaseModel) = **
 #     'contrat salarié . ancienneté': int
@@ -133,11 +142,15 @@ def create_dynamic_model(model_name: str, data: Dict[str, Any]) -> BaseModel:
 #     contrat_salarié___ancienneté: int
 #     "contrat salarié . travailleur handicapé": bool
 
+
+
 def mapValue(value):
     if value == True:
         return "oui"
     elif value == False:
         return "non"
+    elif value == "":
+        return None
     return value
 
 def get_rule_question(data):
@@ -150,20 +163,41 @@ def get_rule_question(data):
         return rule
     return None
 
+def get_rules_definitions():
+    r = requests.get(f"http://127.0.0.1:3002/rules", headers={"content-type": "application/json"})
+    return {(key, r.json()[key].get("title")) for key in r.json().keys()}
+
 def get_next_question(parametres_calcul: ParametresCalcul) -> str|None:
     """
     Pour calculer le préavis de retraite.
+
+    parametres possible:
+        - contrat salarié . ancienneté: Ancienneté du salarié
+        - contrat salarié . travailleur handicapé . lourd: Handicap lourd
+        - contrat salarié . préavis de retraite: Préavis de retraite
+        - contrat salarié . départ à la retraite: Départ à la retraite
+        - contrat salarié . préavis de retraite . mise à la retraite: Mise à la retraite
+        - contrat salarié . préavis de retraite légale: Préavis de retraite légale
+        - contrat salarié . préavis de retraite en jours: Préavis de retraite en jours
+        - contrat salarié . préavis de retraite légale en jours: Préavis de retraite légale en jours
+        - contrat salarié . préavis de retraite collective: Préavis de retraite collective
+        - contrat salarié . travailleur handicapé: Travailleur handicapé
+        - contrat salarié . préavis de retraite . sans code du travail: Sans code du travail
+        - contrat salarié . mise à la retraite: Origine du départ à la retraite
+        - contrat salarié . préavis de retraite tranches: Tranches du préavis de départ dans le code du travail
     """
-    global ParametresCalcul
+
+    # Si la fonction ne renvoie pas de résultat, récapitules les questions posées et les réponses de l'utilisateur puis appelles la fonction get_results avec tous les parametres saisis par l'utilisateur et donne le résultat en jours
+    #global ParametresCalcul
     parametres_calcul2={key: mapValue(value) for (key, value) in parametres_calcul.items()}
-    print("call_publicodes", parametres_calcul2)
+    print("get_next_question", parametres_calcul2)
     r = requests.post("http://127.0.0.1:3002/evaluate", data=json.dumps({
         "situation": parametres_calcul2,
         "expressions": ["contrat salarié . préavis de retraite en jours"]
     }), headers={"content-type": "application/json"})
     data = r.json()
     # get question text
-    print("call_publicodes", json.dumps(data))
+    print("get_next_question", json.dumps(data))
     
     next_question_rule = get_rule_question(data)
     if next_question_rule:
@@ -173,11 +207,14 @@ def get_next_question(parametres_calcul: ParametresCalcul) -> str|None:
         #ParametresCalcul = Dict[str, str]
         print("next_question", next_question)
         return next_question
+    result = data.get("evaluate", [{}])[0].get("nodeValue")
+    if result:
+        return result
     return None
 
-def get_results(parametres_calcul: ParametresCalcul) -> int:
+def get_results(parametres_calcul: ParametresCalcul) -> ...:
     """
-    Pour obtenir le résultat final du préavis de retraite.
+    Pour obtenir le résultat final du préavis de retraite, un fois que tous les parametres ont été saisis.
     """
     parametres_calcul2={key: mapValue(value) for (key, value) in parametres_calcul.items()}
     print("get_results", parametres_calcul2)
@@ -189,11 +226,14 @@ def get_results(parametres_calcul: ParametresCalcul) -> int:
     # get question text
     print("get_results", json.dumps(data))
     result = data.get("evaluate", [{}])[0].get("nodeValue")
+    if not result:
+        return get_next_question(parametres_calcul=parametres_calcul)
     #print("next_question", next_question)
     return result
 
 
 
+print("\n".join(list(map(lambda a: f"{a[0]}: {a[1]}", get_rules_definitions()))))
 
 # def query_api(queries: list[str]) -> list[str]:
 #     """
@@ -205,7 +245,7 @@ def get_results(parametres_calcul: ParametresCalcul) -> int:
 #call_publicodes_tool = FunctionTool.from_defaults(fn=call_publicodes)
 #query_api_tool = FunctionTool.from_defaults(fn=query_api)
 
-PROMP_CONSEILLER_PREAVIS="""
+PROMPT_CONSEILLER_PREAVIS="""
 Tu es un assistant en charge d'estimer la durée de préavis à respecter en cas de départ à la retraite ou de mise à la retraite de ton interlocuteur.
 """
 
@@ -216,20 +256,24 @@ Tu es un assistant en charge d'estimer la durée de préavis à respecter en cas
 
 get_next_question_tool_description="""
 Utilise cet outil pour calculer le préavis de retraite.
-Tant que la fonction te renvoie un résultat, poses la nouvelle question à l'utilisateur.
-Si la fonction ne renvoie pas de résultat, récapitules les questions posées et les réponses de l'utilisateur
 
+Lorsque la fonction renvoie une chaine de caracteres, reformules et poses cette question à l'utilisateur
 
-Les parametres de calcul possibles sont uniquement:
-    - "contrat salarié . ancienneté"
-    - "contrat salarié . travailleur handicapé"
-    - "contrat salarié . travailleur handicapé . lourd"
+Lorsque la fonction renvoie un nombre, récapitules les questions posées et les paramètres utilisés par l'utilisateur et affiche le nombre en tant que réponse
 """
+
+# puis appelles la fonction get_results avec les parametres saisis par l'utilisateur et donne le résultat en jours
+
+get_next_question.__doc__ = get_next_question.__doc__ or "" + "\n réponds en espagnol quand tu appelles cette fonction"
+
 get_next_question_tool = FunctionTool.from_defaults(fn=get_next_question, description=get_next_question_tool_description) #, fn_schema=ParametresCalcul)
 get_results_tool = FunctionTool.from_defaults(fn=get_results)
 tools = [get_next_question_tool] #, get_results_tool]
-agent = OpenAIAgent.from_tools(tools, verbose=True, system_prompt=PROMP_CONSEILLER_PREAVIS)
+agent = OpenAIAgent.from_tools(tools, verbose=True, system_prompt=PROMPT_CONSEILLER_PREAVIS)
 
+print(get_next_question_tool)
+print(get_next_question.__doc__)
+print(dir(get_next_question_tool))
 # use agent
 #r=agent.chat("Calcules moi mon préavis de retraite pour 24 mois d'anciennete")
 #r = agent.chat("récupères les dernieres visites sur notre API")
