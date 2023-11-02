@@ -11,6 +11,7 @@ tiged https://github.com/betagouv/beta.gouv.fr/content/_incubators "$OUT/incubat
 tiged https://github.com/betagouv/beta.gouv.fr/content/_startups "$OUT/startups-beta" && rm -rf "$OUT/startups-beta/.git" 
 tiged https://github.com/betagouv/beta.gouv.fr/content/_organisations "$OUT/organisations-beta" && rm -rf "$OUT/organisations-beta/.git" 
 tiged https://github.com/socialgouv/support/docs "$OUT/support-sre-fabrique" && rm -rf "$OUT/support-sre-fabrique/.git" 
+git clone https://github.com/SocialGouv/www.wiki.git "$OUT/www-wiki" && rm -rf "$OUT/www-wiki/.git" 
 
 mkdir "$OUT/notion-fabrique" || true
 
@@ -34,7 +35,7 @@ node notion-dump/dump.js 4fcee800ae7d4abc9c59e0537b3e3335 > "$OUT/notion-fabriqu
 node notion-dump/dump.js 7db7efeb28f0486c9b2f3a0cf4df16b8 > "$OUT/notion-fabrique/Plateforme - offre de valeur.md" 
 
 OUTPATH="$OUT/standup-fabrique"
-    mkdir "$OUTPATH" || true
+mkdir "$OUTPATH" || true
 
 echo "> downloading standup content"
 curl 'https://hasura-carnets.fabrique.social.gouv.fr/v1/graphql' \
@@ -53,6 +54,8 @@ while IFS=$'\n' read -r c; do
     OUTFILE="$OUTPATH/$team_slug.md"
     echo "---" > "$OUTFILE"
     echo "" >> "$OUTFILE"
+    echo "startup: $startup" >> "$OUTFILE"
+    echo "updated_at: ${created_at:0:10}" >> "$OUTFILE"
     echo "title: Dernieres nouvelles de la startup $startup" >> "$OUTFILE"
     echo "" >> "$OUTFILE"
     echo "---" >> "$OUTFILE"
