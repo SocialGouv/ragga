@@ -3,6 +3,9 @@ app:
   containerPort: 8501
   probesPath: /_stcore/health
   ~needs: [build-app]
+  resources:
+    limits:
+      cpu: 2
   envFrom:
     - secretRef:
         name: openai
