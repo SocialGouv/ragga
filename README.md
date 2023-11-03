@@ -9,7 +9,6 @@ The service download and index files based on [./download.sh](./download.sh)
 ## Todo
 
 - gestion CSV/pandas
-- always cite sources and urls
 - add evaluation pipeline
 - données : matomo, github...
 

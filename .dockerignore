@@ -1,0 +1,13 @@
+*.md
+.git
+**/dist
+**/build
+**/node_modules
+**/.next
+**/.docz
+**/coverage
+node_modules
+npm-debug.log
+yarn-error.log
+.next
+__pycahce__

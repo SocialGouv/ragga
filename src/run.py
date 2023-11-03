@@ -1,12 +1,26 @@
+import random
 import streamlit as st
 import chromadb
+import logging
+import sys
 
 from llama_index.vector_stores import ChromaVectorStore
 from llama_index import VectorStoreIndex
-
+from llama_index.chat_engine.types import ChatMode
 from sources import sources
 from index import index
 
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+# stream_handler = logging.StreamHandler(stream=sys.stdout)
+# stream_handler.setLevel(logging.DEBUG)
+
+# file_handler = logging.FileHandler("logs.log")
+# file_handler.setLevel(logging.DEBUG)
+
+# logger.addHandler(file_handler)
+# logger.addHandler(stream_handler)
 
 # chroma_client = chromadb.PersistentClient(path="./chroma_db")
 # chroma_collection = chroma_client.get_collection("standup-fabrique")
@@ -15,12 +29,27 @@ from index import index
 
 # #index = load_data()
 
-sources_list = map(lambda source: " - [{}]({})".format(source.get("title"), source.get("url")),sources)
+sources_list = map(
+    lambda source: " - [{}]({})".format(source.get("title"), source.get("url")), sources
+)
 
-st.set_page_config(page_title="LlamaIndex + OpenAI + Markdown = ❤️", page_icon="🐫", layout="centered", initial_sidebar_state="auto", menu_items=None)
-st.header("LlamaIndex + OpenAI + Markdown = ❤️")
-st.title("Interrogez la doc de la fabrique, powered by LlamaIndex 💬🦙")
-st.info("Détail des sources utilisées : \n\n{}\n\n:warning:  Pensez à préciser le nom de l'incubateur si la question lui est spécifique.\n\nRDV [sur GitHub](https://github.com/SocialGouv/ragga)".format("\n".join(sources_list)), icon="💡")
+st.set_page_config(
+    page_title="LlamaIndex + OpenAI + Markdown",
+    page_icon="🐫",
+    layout="centered",
+    initial_sidebar_state="auto",
+    menu_items=None,
+)
+st.header("LlamaIndex + OpenAI + Markdown")
+st.title(
+    "Interrogez la doc de la fabrique des ministères sociaux",
+)
+st.info(
+    "Détail des sources utilisées : \n\n{}\n\n:warning: Bot expérimental, retours bienvenus sur [sur GitHub](https://github.com/SocialGouv/ragga/issues/new)\n\nVoir des [exemples de réponses](https://pad.numerique.gouv.fr/751pO3ShQU-cZ3o-gQiYpA)".format(
+        "\n".join(sources_list)
+    ),
+    icon="💡",
+)
 
 if "messages" not in st.session_state.keys():  # Initialize the chat message history
     st.session_state.messages = [
@@ -30,9 +59,25 @@ if "messages" not in st.session_state.keys():  # Initialize the chat message his
         }
     ]
 
-chat_engine = index.as_chat_engine(chat_mode="context", verbose=True, similarity_top_k=5)
+if "chat_engine" not in st.session_state:
+    # set the initial default value of the slider widget
+    chat_engine = index.as_chat_engine(
+        chat_mode=ChatMode.CONTEXT,
+        verbose=True,
+        similarity_top_k=5,
+        system_prompt="Tu es un expert de la documentation de la fabrique numérique des ministères sociaux et tu réponds à des questionsen t'appuyant uniquement sur le contexte fourni et en ne faisant jamais appel à tes propres connaissances. Si tu cherches des contacts, cherches les contacts de la fabrique numérique des ministères sociaux en priorité",
+    )
+    st.session_state["chat_engine"] = chat_engine
 
-if prompt := st.chat_input("A votre écoute :)"):
+waiters = [
+    "Je refléchis...",
+    "Hummmm laissez moi chercher...",
+    "Je cherche des réponses...",
+]
+
+input = st.chat_input("A votre écoute :)")
+
+if prompt := input:
     st.session_state.messages.append({"role": "user", "content": prompt})
 
 for message in st.session_state.messages:  # Display the prior chat messages
@@ -58,24 +103,69 @@ for message in st.session_state.messages:  # Display the prior chat messages
 # response.print_response_stream()
 #
 
+
+def get_source_link(description: str, filename):
+    source = [src for src in sources if src.get("description") == description]
+    if source:
+        get_url = source[0].get("get_url")
+        if get_url:
+            return get_url(description, filename)
+        return source[0].get("url")
+    return filename
+
+
+def get_source_links(source_nodes):
+    sources = filter(
+        lambda a: True,
+        set(
+            map(
+                lambda node: get_source_link(
+                    description=node.metadata.get("source"),
+                    filename=node.metadata.get("filename"),
+                ),
+                source_nodes,
+            )
+        ),
+    )
+    return "\n".join(map(lambda row: f" - {row}", sources))
+
+
 if st.session_state.messages[-1]["role"] != "assistant":
-
     with st.chat_message("assistant"):
-        with st.spinner("Je refléchis..."):
+        message = str(random.choice(waiters))
+        with st.spinner(message):
             message_placeholder = st.empty()
+            source_nodes = []
 
-            streaming_response = chat_engine.stream_chat(prompt)
+            chat_engine = index.as_chat_engine(
+                chat_mode=ChatMode.CONTEXT,
+                verbose=True,
+                similarity_top_k=5,
+                system_prompt="""
+Tu es un expert de la documentation de la fabrique numérique des ministères sociaux et tu réponds à des questions en t'appuyant uniquement sur le contexte fourni et en ne faisant jamais appel à tes propres connaissances.
+Si tu cherches des contacts, cherches les contacts de la fabrique numérique des ministères sociaux en priorité
+Pour les questions techniques cherches dans la documentation SRE
+""",
+            )
+            if prompt:
+                streaming_response = chat_engine.stream_chat(prompt)
 
-            # streaming_response.print_response_stream()
+                # streaming_response.print_response_stream()
 
-            full_response = ""
-            for text in streaming_response.response_gen:
-                full_response += text
-                message_placeholder.markdown(full_response)
+                full_response = ""
+                source_nodes += streaming_response.source_nodes
 
+                for text in streaming_response.response_gen:
+                    full_response += text
+                    message_placeholder.markdown(full_response)
 
-            st.session_state.messages.append({"role": "assistant", "content": full_response})
-
-if st.button("Recommencer"):
-    chat_engine.reset()
-    del st.session_state["messages"]
+                # print(source_nodes)
+                str_sources = get_source_links(source_nodes)
+                if str_sources:
+                    full_response += "\n\nSources utilisées : \n\n" + str_sources
+                    message_placeholder.markdown(full_response)
+                # print("str_sources", str_sources)
+                #   full_response += f"\n\n{str_sources}"
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": full_response}
+                )
