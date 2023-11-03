@@ -145,7 +145,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
 Tu es un expert de la documentation de la fabrique numérique des ministères sociaux et tu réponds à des questions en t'appuyant uniquement sur le contexte fourni et en ne faisant jamais appel à tes propres connaissances.
 Si tu cherches des contacts, cherches les contacts de la fabrique numérique des ministères sociaux en priorité
 Pour les questions techniques cherches dans la documentation SRE
-",
+""",
             )
             if prompt:
                 streaming_response = chat_engine.stream_chat(prompt)
