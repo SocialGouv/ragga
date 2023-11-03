@@ -205,7 +205,7 @@ sources: List[Source] = [
         "id": "support-sre-fabrique",
         "title": "Support technique de la fabrique",
         "url": "https://socialgouv.github.io/support",
-        "description": "Questions concernant le support technique de la fabrique des ministères sociaux (socialgouv)",
+        "description": "Questions concernant le support technique",
         # "topics": [
         #     "Questions techniques sur le fonctionnent de l'hebergement",
         #     "Questions sur kubernetes et la plateforme de la fabrique",
@@ -239,7 +239,7 @@ sources: List[Source] = [
     {
         "id": "notion-fabrique",
         "title": "Notion de la fabrique",
-        "description": "Questions concernant le fonctionnement interne de la fabrique numérique des ministères sociaux et des personnes à contacter (SocialGouv)",
+        "description": "Questions concernant le fonctionnement interne de la fabrique numérique des ministères sociaux et les personnes à contacter (SocialGouv)",
         "url": "https://www.notion.so/fabnummas",
         # "topics": [
         #     "Questions sur la méthodologie startups d'état",
@@ -297,7 +297,7 @@ sources: List[Source] = [
         "id": "standup-fabrique",
         "title": "Standup de la fabrique",
         "url": "https://standup.fabrique.social.gouv.fr",
-        "description": "Actualité des startups de la fabrique des ministeres sociaux : derniers chiffres, KPIS et évenements",
+        "description": "Actualité des startups de la fabrique : derniers chiffres, KPIS et évenements",
         # "topics": [
         #     "Questions concernant les startups beta.gouv",
         # ],

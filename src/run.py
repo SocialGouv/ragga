@@ -15,12 +15,27 @@ from index import index
 
 # #index = load_data()
 
-sources_list = map(lambda source: " - [{}]({})".format(source.get("title"), source.get("url")),sources)
+sources_list = map(
+    lambda source: " - [{}]({})".format(source.get("title"), source.get("url")), sources
+)
 
-st.set_page_config(page_title="LlamaIndex + OpenAI + Markdown = ❤️", page_icon="🐫", layout="centered", initial_sidebar_state="auto", menu_items=None)
-st.header("LlamaIndex + OpenAI + Markdown = ❤️")
-st.title("Interrogez la doc de la fabrique, powered by LlamaIndex 💬🦙")
-st.info("Détail des sources utilisées : \n\n{}\n\n:warning:  Pensez à préciser le nom de l'incubateur si la question lui est spécifique.\n\nRDV [sur GitHub](https://github.com/SocialGouv/ragga)".format("\n".join(sources_list)), icon="💡")
+st.set_page_config(
+    page_title="LlamaIndex + OpenAI + Markdown",
+    page_icon="🐫",
+    layout="centered",
+    initial_sidebar_state="auto",
+    menu_items=None,
+)
+st.header("LlamaIndex + OpenAI + Markdown")
+st.title(
+    "Interrogez la doc de la fabrique des ministeres sociaux",
+)
+st.info(
+    "Détail des sources utilisées : \n\n{}\n\n:warning:  Pensez à préciser le nom de l'incubateur si la question lui est spécifique.\n\nRDV [sur GitHub](https://github.com/SocialGouv/ragga)".format(
+        "\n".join(sources_list)
+    ),
+    icon="💡",
+)
 
 if "messages" not in st.session_state.keys():  # Initialize the chat message history
     st.session_state.messages = [
@@ -30,7 +45,9 @@ if "messages" not in st.session_state.keys():  # Initialize the chat message his
         }
     ]
 
-chat_engine = index.as_chat_engine(chat_mode="context", verbose=True, similarity_top_k=5)
+chat_engine = index.as_chat_engine(
+    chat_mode="context", verbose=True, similarity_top_k=5
+)
 
 if prompt := st.chat_input("A votre écoute :)"):
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -59,7 +76,6 @@ for message in st.session_state.messages:  # Display the prior chat messages
 #
 
 if st.session_state.messages[-1]["role"] != "assistant":
-
     with st.chat_message("assistant"):
         with st.spinner("Je refléchis..."):
             message_placeholder = st.empty()
@@ -73,8 +89,9 @@ if st.session_state.messages[-1]["role"] != "assistant":
                 full_response += text
                 message_placeholder.markdown(full_response)
 
-
-            st.session_state.messages.append({"role": "assistant", "content": full_response})
+            st.session_state.messages.append(
+                {"role": "assistant", "content": full_response}
+            )
 
 if st.button("Recommencer"):
     chat_engine.reset()
