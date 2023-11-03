@@ -44,6 +44,7 @@ Source = TypedDict(
         # "on_finish": NotRequired[Callable],
         "additional_documents": NotRequired[Callable],
         "description": NotRequired[str],
+        "get_url": NotRequired[Callable],
     },
 )
 
@@ -154,6 +155,26 @@ def beta_se_postprocessor(documents):
     return docs
 
 
+def get_wiki_url(filename):
+    path = filename.replace("content/www-wiki", "").replace(".md", "")
+    return f"https://github.com/SocialGouv/www/wiki/{path}"
+
+
+def get_beta_startup_url(filename):
+    startup = filename.replace("content/startups-beta", "").replace(".md", "")
+    return f"https://beta.gouv.fr/startups/{startup}.html"
+
+
+def get_support_sre_url(filename):
+    path = filename.replace("content/support-sre-fabrique", "").replace(".md", "")
+    return f"https://socialgouv.github.io/support/docs/{path}"
+
+
+def get_notion_fabrique_url(filename):
+    doc = filename.replace("content/notion-fabrique", "").replace(".md", "")
+    return f"https://www.notion.so/fabnummas/{doc}"
+
+
 sources: List[Source] = [
     # {
     #     "id": "startups-beta-gouv-sample",
@@ -174,6 +195,7 @@ sources: List[Source] = [
         "path": "./content/startups-beta",
         "file_metadata": get_se_metadata,
         "include_metas": ["contact"],
+        "get_url": get_beta_startup_url,
         "additional_documents": beta_se_postprocessor,
         "description": "Questions concernant les startups beta.gouv",
         "examples": [
@@ -212,6 +234,7 @@ sources: List[Source] = [
         # ],
         "path": "./content/support-sre-fabrique",
         "file_metadata": get_sre_metadata,
+        "get_url": get_support_sre_url,
         "examples": [
             # "Comment me connecter à ma base de données",
             # "Comment configurer mes ressources",
@@ -238,9 +261,10 @@ sources: List[Source] = [
     # },
     {
         "id": "notion-fabrique",
-        "title": "Notion de la fabrique",
+        "title": "Notion de la fabrique (partiel)",
         "description": "Questions concernant le fonctionnement interne de la fabrique numérique des ministères sociaux et les personnes à contacter (SocialGouv)",
         "url": "https://www.notion.so/fabnummas",
+        "get_url": get_notion_fabrique_url,
         # "topics": [
         #     "Questions sur la méthodologie startups d'état",
         #     "Questions sur le fonctionnement, les outils pour gérer sa startup",
@@ -297,6 +321,7 @@ sources: List[Source] = [
         "id": "standup-fabrique",
         "title": "Standup de la fabrique (carnets)",
         "url": "https://standup.fabrique.social.gouv.fr",
+        # "get_url": lambda filename: "https://standup.fabrique.social.gouv.fr",
         "description": "Actualité des startups de la fabrique : derniers chiffres, KPIS et évenements",
         # "topics": [
         #     "Questions concernant les startups beta.gouv",
@@ -317,6 +342,7 @@ sources: List[Source] = [
         "id": "www-wiki",
         "title": "Informations sur le fonctionnement la fabrique (wiki)",
         "url": "https://standup.fabrique.social.gouv.fr",
+        "get_url": get_wiki_url,
         "description": "Wiki de la fabrique: glossaire, standup, mattermost et collaboration",
         # "topics": [
         #     "Questions concernant les startups beta.gouv",

@@ -32,7 +32,7 @@ def get_filename_metadata(source, filename):
         "source": source.get("description", source.get("title")),
         **source.get("file_metadata", get_file_metadata)(filename),
     }
-    print(filename, metadata)
+    # print(filename, metadata)
     return metadata
 
 
