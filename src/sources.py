@@ -156,22 +156,22 @@ def beta_se_postprocessor(documents):
 
 
 def get_wiki_url(filename):
-    path = filename.replace("content/www-wiki", "").replace(".md", "")
+    path = filename.replace("content/www-wiki/", "").replace(".md", "")
     return f"https://github.com/SocialGouv/www/wiki/{path}"
 
 
 def get_beta_startup_url(filename):
-    startup = filename.replace("content/startups-beta", "").replace(".md", "")
+    startup = filename.replace("content/startups-beta/", "").replace(".md", "")
     return f"https://beta.gouv.fr/startups/{startup}.html"
 
 
 def get_support_sre_url(filename):
-    path = filename.replace("content/support-sre-fabrique", "").replace(".md", "")
+    path = filename.replace("content/support-sre-fabrique/", "").replace(".md", "")
     return f"https://socialgouv.github.io/support/docs/{path}"
 
 
 def get_notion_fabrique_url(filename):
-    doc = filename.replace("content/notion-fabrique", "").replace(".md", "")
+    doc = filename.replace("content/notion-fabrique/", "").replace(".md", "")
     return f"https://www.notion.so/fabnummas/{doc}"
 
 
