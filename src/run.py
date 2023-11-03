@@ -112,7 +112,9 @@ def get_source_link(description: str, filename):
     source = [src for src in sources if src.get("description") == description]
     if source:
         if source[0].get("get_url"):
-            return source[0].get("get_url", lambda a: a)(filename)
+            return source[0].get("get_url", lambda a, b: source[0].get("url"))(
+                description, filename
+            )
         return source[0].get("url")
     return None
 
