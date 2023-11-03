@@ -31,7 +31,7 @@ st.title(
     "Interrogez la doc de la fabrique des ministeres sociaux",
 )
 st.info(
-    "Détail des sources utilisées : \n\n{}\n\nVoir des [exemples de réponses](https://pad.numerique.gouv.fr/751pO3ShQU-cZ3o-gQiYpA)\n\nDétails [sur GitHub](https://github.com/SocialGouv/ragga)".format(
+    "Détail des sources utilisées : \n\n{}\n\n:warning: Bot expérimental, retours bienvenus sur [sur GitHub](https://github.com/SocialGouv/ragga/issues/new)\n\nVoir des [exemples de réponses](https://pad.numerique.gouv.fr/751pO3ShQU-cZ3o-gQiYpA)".format(
         "\n".join(sources_list)
     ),
     icon="💡",
