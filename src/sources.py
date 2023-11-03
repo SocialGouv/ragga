@@ -295,7 +295,7 @@ sources: List[Source] = [
     # },
     {
         "id": "standup-fabrique",
-        "title": "Standup de la fabrique",
+        "title": "Standup de la fabrique (carnets)",
         "url": "https://standup.fabrique.social.gouv.fr",
         "description": "Actualité des startups de la fabrique : derniers chiffres, KPIS et évenements",
         # "topics": [
@@ -315,7 +315,7 @@ sources: List[Source] = [
     },
     {
         "id": "www-wiki",
-        "title": "Informations sur le fonctionnement la fabrique",
+        "title": "Informations sur le fonctionnement la fabrique (wiki)",
         "url": "https://standup.fabrique.social.gouv.fr",
         "description": "Wiki de la fabrique: glossaire, standup, mattermost et collaboration",
         # "topics": [
