@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/SocialGouv/ragga/compare/v1.0.5...v1.0.6) (2023-11-03)
+
+
+### Bug Fixes
+
+* increase cpu ([28b6741](https://github.com/SocialGouv/ragga/commit/28b67415963f253194efb7937a3d377a4a2312ea))
+
 ## [1.0.5](https://github.com/SocialGouv/ragga/compare/v1.0.4...v1.0.5) (2023-11-03)
 
 
