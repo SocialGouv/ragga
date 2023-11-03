@@ -5,8 +5,8 @@ description = ""
 authors = ["Julien Bouquillon <julien.bouquillon@sg.social.gouv.fr>"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-llama-index = "^0.8.40"
+python =  ">=3.11,<3.12"
+llama-index = "^0.8.59"
 python-frontmatter = "^1.0.0"
 llama-cpp-python = "^0.2.11"
 chromadb = "^0.4.13"
@@ -15,7 +15,8 @@ torch = "^2.1.0"
 accelerate = "^0.23.0"
 safetensors = "^0.4.0"
 mypy = "^1.5.1"
-streamlit = "^1.27.2"
+streamlit = "^1.28.1"
+openai = "^0.28.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

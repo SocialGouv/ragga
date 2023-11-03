@@ -84,6 +84,7 @@ def get_sre_metadata(filename):
     for path in sre_files_mapping.keys():
         if bool(re.match(path, filename)):
             return {
+                "fabrique": "fabrique des ministères sociaux",
                 **dict_string_values(sre_files_mapping[path]),
                 **metadata,
             }
@@ -143,13 +144,14 @@ def beta_se_postprocessor(documents):
         # print("\n".join(statements))
         doc = Document(
             text="\n".join(statements),
-            metadata={
-                "source": "Startups de {}".format(incubator),
-                "title": "Liste des startups par phase de l'incubateur {}".format(
-                    incubator
-                ),
-            },
         )
+        doc.metadata = {
+            "source": "Startups de {}".format(incubator),
+            "title": "Liste des startups par phase de l'incubateur {}".format(
+                incubator
+            ),
+        }
+
         docs.append(doc)
         # index.insert(doc, service_context=service_context)
     return docs
@@ -157,17 +159,17 @@ def beta_se_postprocessor(documents):
 
 def get_wiki_url(title, filename):
     path = filename.replace("content/www-wiki/", "").replace(".md", "")
-    return f"[{title}](https://github.com/SocialGouv/www/wiki/{path})"
+    return f"[{title} : {path}](https://github.com/SocialGouv/www/wiki/{path})"
 
 
 def get_beta_startup_url(title, filename):
     startup = filename.replace("content/startups-beta/", "").replace(".md", "")
-    return f"[{title}](https://beta.gouv.fr/startups/{startup}.html)"
+    return f"[{title} : {startup}](https://beta.gouv.fr/startups/{startup}.html)"
 
 
 def get_support_sre_url(title, filename):
     path = filename.replace("content/support-sre-fabrique/", "").replace(".md", "")
-    return f"[{title}](https://socialgouv.github.io/support/docs/{path})"
+    return f"[{title} : {filename}](https://socialgouv.github.io/support/docs/{path})"
 
 
 def get_notion_fabrique_url(title, filename):
@@ -187,7 +189,7 @@ sources: List[Source] = [
     # },
     {
         "id": "startups-beta",
-        "title": "Startups beta.gouv",
+        "title": "Startups beta.gouv (partiel)",
         "url": "https://beta.gouv.fr/startups/",
         # "topics": [
         #     "Questions concernant les startups beta.gouv",
@@ -197,7 +199,7 @@ sources: List[Source] = [
         "include_metas": ["contact"],
         "get_url": get_beta_startup_url,
         "additional_documents": beta_se_postprocessor,
-        "description": "Questions concernant les startups beta.gouv",
+        "description": "Questions concernant des startups spécifiques beta.gouv",
         "examples": [
             #      "Quelles startups dans le domaine de l'éducation ?",
             #     "Quelles sont les startups du GIP de l'inclusion ?",
@@ -225,9 +227,9 @@ sources: List[Source] = [
     },
     {
         "id": "support-sre-fabrique",
-        "title": "Support technique de la fabrique",
+        "title": "Support technique de la fabrique des minsiteres sociaux",
         "url": "https://socialgouv.github.io/support",
-        "description": "Questions concernant le support technique",
+        "description": "Questions concernant le support technique de la fabrique des minsiteres sociaux",
         # "topics": [
         #     "Questions techniques sur le fonctionnent de l'hebergement",
         #     "Questions sur kubernetes et la plateforme de la fabrique",
@@ -321,7 +323,7 @@ sources: List[Source] = [
         "id": "standup-fabrique",
         "title": "Standup de la fabrique (carnets)",
         "url": "https://standup.fabrique.social.gouv.fr",
-        # "get_url": lambda filename: "https://standup.fabrique.social.gouv.fr",
+        # "get_url": lambda title, filename: "https://standup.fabrique.social.gouv.fr",
         "description": "Actualité des startups de la fabrique : derniers chiffres, KPIS et évenements",
         # "topics": [
         #     "Questions concernant les startups beta.gouv",

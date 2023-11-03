@@ -11,7 +11,7 @@ from sources import sources
 from index import index
 
 logger = logging.getLogger()
-# logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 # stream_handler = logging.StreamHandler(stream=sys.stdout)
 # stream_handler.setLevel(logging.DEBUG)
@@ -62,7 +62,10 @@ if "messages" not in st.session_state.keys():  # Initialize the chat message his
 if "chat_engine" not in st.session_state:
     # set the initial default value of the slider widget
     chat_engine = index.as_chat_engine(
-        chat_mode=ChatMode.CONTEXT, verbose=True, similarity_top_k=5
+        chat_mode=ChatMode.CONTEXT,
+        verbose=True,
+        similarity_top_k=5,
+        system_prompt="Tu es un expert de la documentation de la fabrique numérique des ministères sociaux et tu réponds à des questionsen t'appuyant uniquement sur le contexte fourni et en ne faisant jamais appel à tes propres connaissances. Si tu cherches des contacts, cherches les contacts de la fabrique numérique des ministères sociaux en priorité",
     )
     st.session_state["chat_engine"] = chat_engine
 
@@ -101,22 +104,14 @@ for message in st.session_state.messages:  # Display the prior chat messages
 #
 
 
-waiters = [
-    "Je refléchis...",
-    "Hummmm laissez moi chercher...",
-    "Je cherche des réponses...",
-]
-
-
 def get_source_link(description: str, filename):
     source = [src for src in sources if src.get("description") == description]
     if source:
-        if source[0].get("get_url"):
-            return source[0].get("get_url", lambda a, b: source[0].get("url"))(
-                description, filename
-            )
+        get_url = source[0].get("get_url")
+        if get_url:
+            return get_url(description, filename)
         return source[0].get("url")
-    return None
+    return filename
 
 
 def get_source_links(source_nodes):
@@ -125,8 +120,8 @@ def get_source_links(source_nodes):
         set(
             map(
                 lambda node: get_source_link(
-                    filename=node.metadata.get("filename"),
                     description=node.metadata.get("source"),
+                    filename=node.metadata.get("filename"),
                 ),
                 source_nodes,
             )
@@ -142,23 +137,31 @@ if st.session_state.messages[-1]["role"] != "assistant":
             message_placeholder = st.empty()
             source_nodes = []
 
-            streaming_response = st.session_state["chat_engine"].stream_chat(prompt)
-
-            # streaming_response.print_response_stream()
-
-            full_response = ""
-            source_nodes += streaming_response.source_nodes
-
-            for text in streaming_response.response_gen:
-                full_response += text
-                message_placeholder.markdown(full_response)
-
-            str_sources = get_source_links(source_nodes)
-            if str_sources:
-                full_response += "\n\nSources utilisées : \n\n" + str_sources
-                message_placeholder.markdown(full_response)
-            # print("str_sources", str_sources)
-            #   full_response += f"\n\n{str_sources}"
-            st.session_state.messages.append(
-                {"role": "assistant", "content": full_response}
+            chat_engine = index.as_chat_engine(
+                chat_mode=ChatMode.CONTEXT,
+                verbose=True,
+                similarity_top_k=5,
+                system_prompt="Tu es un expert de la documentation de la fabrique numérique des ministères sociaux et tu réponds à des questions en t'appuyant uniquement sur le contexte fourni et en ne faisant jamais appel à tes propres connaissances. Si tu cherches des contacts, cherches les contacts de la fabrique numérique des ministères sociaux en priorité",
             )
+            if prompt:
+                streaming_response = chat_engine.stream_chat(prompt)
+
+                # streaming_response.print_response_stream()
+
+                full_response = ""
+                source_nodes += streaming_response.source_nodes
+
+                for text in streaming_response.response_gen:
+                    full_response += text
+                    message_placeholder.markdown(full_response)
+
+                # print(source_nodes)
+                str_sources = get_source_links(source_nodes)
+                if str_sources:
+                    full_response += "\n\nSources utilisées : \n\n" + str_sources
+                    message_placeholder.markdown(full_response)
+                # print("str_sources", str_sources)
+                #   full_response += f"\n\n{str_sources}"
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": full_response}
+                )

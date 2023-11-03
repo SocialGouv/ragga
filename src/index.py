@@ -4,6 +4,7 @@ import logging
 import chromadb
 import streamlit as st
 
+from llama_index.llms import OpenAI
 from llama_index import SimpleDirectoryReader, VectorStoreIndex
 from llama_index.vector_stores import ChromaVectorStore
 from llama_index.storage.storage_context import StorageContext
@@ -15,16 +16,16 @@ from MarkdownReader import MarkdownReader
 from sources import sources, get_file_metadata, Source
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 
-stream_handler = logging.StreamHandler(stream=sys.stdout)
-stream_handler.setLevel(logging.INFO)
+# stream_handler = logging.StreamHandler(stream=sys.stdout)
+# stream_handler.setLevel(logging.DEBUG)
 
-file_handler = logging.FileHandler("logs.log")
-file_handler.setLevel(logging.DEBUG)
+# file_handler = logging.FileHandler("logs.log")
+# file_handler.setLevel(logging.DEBUG)
 
-logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
+# logger.addHandler(file_handler)
+# logger.addHandler(stream_handler)
 
 
 def get_filename_metadata(source, filename):
@@ -144,7 +145,9 @@ def index_sources(sources):
         #     source.get("on_finish", lambda a, b: None)(docs, index) # lambda for typings
     finally:
         vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
-        index = VectorStoreIndex.from_vector_store(vector_store)
+        index = VectorStoreIndex.from_vector_store(
+            vector_store, service_context=service_context
+        )
     return index
 
 
@@ -152,19 +155,30 @@ node_parser = MarkdownNodeParser.from_defaults()
 
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 
+
+# llm = OpenAI(
+#     model="gpt-3.5-turbo",
+#     temperature=0.0,
+# )
+
 # use OpenAI by default
 service_context = ServiceContext.from_defaults(
     chunk_size=512,
     # embed_model=embed_model,
     node_parser=node_parser,
-    # llm=llm,
+    #   llm=llm,
+    # prompt_helper=
 )
 
 index = index_sources(sources)
 
 
 if __name__ == "__main__":
+    # query
     chat = index.as_chat_engine(
-        chat_mode=ChatMode.CONTEXT, verbose=True, similarity_top_k=5
+        chat_mode=ChatMode.CONTEXT,
+        verbose=True,
+        similarity_top_k=5,
+        service_context=service_context,
     )
     chat.chat_repl()
