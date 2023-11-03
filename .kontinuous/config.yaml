@@ -1,4 +1,6 @@
 projectName: fabrique
 dependencies:
   fabrique:
-    import: socialgouv/kontinuous/plugins/fabrique
+    extends:
+      #- name: ovh
+      - name: buildkit-service
