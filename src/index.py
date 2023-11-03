@@ -59,6 +59,7 @@ def get_documents(source):
 def index_source(chroma_client, source: Source):
     """index given source in chromadb"""
     docs = get_documents(source)
+    chroma_collection = None
     try:
         chroma_collection = chroma_client.get_collection(source.get("id"))
         logger.info("==> Collection {} already exist\n\n".format(source.get("id")))
@@ -85,8 +86,9 @@ def index_source(chroma_client, source: Source):
                 docs, index
             )  # lambda for typings
     finally:
-        vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
-        index = VectorStoreIndex.from_vector_store(vector_store)
+        if chroma_collection:
+            vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
+            index = VectorStoreIndex.from_vector_store(vector_store)
 
     return index
 
@@ -179,6 +181,5 @@ if __name__ == "__main__":
         chat_mode=ChatMode.CONTEXT,
         verbose=True,
         similarity_top_k=5,
-        service_context=service_context,
     )
     chat.chat_repl()
