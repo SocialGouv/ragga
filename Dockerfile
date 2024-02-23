@@ -33,7 +33,6 @@ RUN chown -R app:app /app
 COPY . /app
 
 RUN npm install -g tiged yarn
-RUN cd notion-dump && yarn
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
