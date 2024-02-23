@@ -58,37 +58,37 @@ def get_file_metadata(filename):
     return metadata
 
 
-sre_files_mapping = {
-    "content/support-sre-fabrique/init/.*": {
-        "description": [
-            "Présentation générale de la plateforme et des services technique de la fabrique"
-        ],
-    },
-    "content/support-sre-fabrique/infrastructure/.*": {
-        "description": ["Questions sur l'infrastructure technique de la fabrique"],
-    },
-    "content/support-sre-fabrique/standards/.*": {
-        "description": [
-            "Questions sur les standards techniques et conventions de la fabrique"
-        ],
-    },
-    "content/support-sre-fabrique/workshops/.*": {
-        "description": ["Workshops proposés aux développeurs(ses) de la fabrique"],
-    },
-}
+# sre_files_mapping = {
+#     "content/support-sre-fabrique/init/.*": {
+#         "description": [
+#             "Présentation générale de la plateforme et des services technique de la fabrique"
+#         ],
+#     },
+#     "content/support-sre-fabrique/infrastructure/.*": {
+#         "description": ["Questions sur l'infrastructure technique de la fabrique"],
+#     },
+#     "content/support-sre-fabrique/standards/.*": {
+#         "description": [
+#             "Questions sur les standards techniques et conventions de la fabrique"
+#         ],
+#     },
+#     "content/support-sre-fabrique/workshops/.*": {
+#         "description": ["Workshops proposés aux développeurs(ses) de la fabrique"],
+#     },
+# }
 
 
-def get_sre_metadata(filename):
-    logger.debug("get_sre_metadata: {}".format(filename))
-    metadata = get_file_metadata(filename)
-    for path in sre_files_mapping.keys():
-        if bool(re.match(path, filename)):
-            return {
-                "fabrique": "fabrique des ministères sociaux",
-                **dict_string_values(sre_files_mapping[path]),
-                **metadata,
-            }
-    return metadata
+# def get_sre_metadata(filename):
+#     logger.debug("get_sre_metadata: {}".format(filename))
+#     metadata = get_file_metadata(filename)
+#     for path in sre_files_mapping.keys():
+#         if bool(re.match(path, filename)):
+#             return {
+#                 "fabrique": "fabrique des ministères sociaux",
+#                 **dict_string_values(sre_files_mapping[path]),
+#                 **metadata,
+#             }
+#     return metadata
 
 
 def get_last_phase(metadata):
@@ -225,69 +225,69 @@ sources: List[Source] = [
             # "combien de startups sont gérées à l'incubateur des ministeres sociaux et sont en acceleration ?"
         ],
     },
-    {
-        "id": "support-sre-fabrique",
-        "title": "Support technique de la fabrique des minsiteres sociaux",
-        "url": "https://socialgouv.github.io/support",
-        "description": "Questions concernant le support technique de la fabrique des minsiteres sociaux",
-        # "topics": [
-        #     "Questions techniques sur le fonctionnent de l'hebergement",
-        #     "Questions sur kubernetes et la plateforme de la fabrique",
-        # ],
-        "path": "./content/support-sre-fabrique",
-        "file_metadata": get_sre_metadata,
-        "get_url": get_support_sre_url,
-        "examples": [
-            # "Comment me connecter à ma base de données",
-            # "Comment configurer mes ressources",
-            # "Demander de l'aide",
-        ],
-    },
     # {
-    #     "id": "documentation-beta",
-    #     "title": "Documentation beta.gouv",
-    #     "url": "https://doc.incubateur.net/",
-    #     "description": "Questions sur la methodologie, les services outils, et le fonctionnement des startups d'état beta.gouv",
+    #     "id": "support-sre-fabrique",
+    #     "title": "Support technique de la fabrique des minsiteres sociaux",
+    #     "url": "https://socialgouv.github.io/support",
+    #     "description": "Questions concernant le support technique de la fabrique des minsiteres sociaux",
     #     # "topics": [
-    #     #     "Questions sur la méthodologie startups d'état",
-    #     #     "Questions sur le fonctionnement, les outils pour gérer sa startup",
-    #     #     "Questions sur la communauté beta",
+    #     #     "Questions techniques sur le fonctionnent de l'hebergement",
+    #     #     "Questions sur kubernetes et la plateforme de la fabrique",
     #     # ],
-    #     "path": "./content/documentation-beta",
-    #     "exclude": ["*SUMMARY.md",".*README.md"], # bug with long content
-    #     # "file_metadata": get_file_metadata,
+    #     "path": "./content/support-sre-fabrique",
+    #     "file_metadata": get_sre_metadata,
+    #     "get_url": get_support_sre_url,
     #     "examples": [
-    #         # "comment lancer un openlab ?",
-    #         # "comment accéder à mattermost ?",
+    #         # "Comment me connecter à ma base de données",
+    #         # "Comment configurer mes ressources",
+    #         # "Demander de l'aide",
     #     ],
     # },
     {
-        "id": "notion-fabrique",
-        "title": "Notion de la fabrique (partiel)",
-        "description": "Questions concernant le fonctionnement interne de la fabrique numérique des ministères sociaux et les personnes à contacter (SocialGouv)",
-        "url": "https://www.notion.so/fabnummas",
-        "get_url": get_notion_fabrique_url,
+        "id": "documentation-beta",
+        "title": "Documentation beta.gouv",
+        "url": "https://doc.incubateur.net/",
+        "description": "Questions sur la methodologie, les services outils, et le fonctionnement des startups d'état beta.gouv",
         # "topics": [
         #     "Questions sur la méthodologie startups d'état",
         #     "Questions sur le fonctionnement, les outils pour gérer sa startup",
         #     "Questions sur la communauté beta",
         # ],
-        "path": "./content/notion-fabrique",
+        "path": "./content/documentation-beta",
+        "exclude": ["*SUMMARY.md", ".*README.md"],  # bug with long content
         # "file_metadata": get_file_metadata,
         "examples": [
-            #  "c'est quoi CSAPA ?",
-            #  "qui gere les sujets infrastructure a la fabrique ?"
-            # "que fait la fabrique ?",
-            # "comment est organisée la fabrique ?",
-            # "quelles sont les valeurs de la fabrique ?",
-            # "comment est dirigée fabrique ?",
-            # "commet sont selectionnées les projets de la fabrique ?",
-            # "quelle personne contacter pour des conseils sur la gestion mon produit ?",
-            # "quelle personne contacter pour des conseils techniques ?",
-            # "quelle personne contacter sur les questions d'homologations et de conformité ?",
-            # "quelle personne contacter sur les questions juridiques ?",
+            # "comment lancer un openlab ?",
+            # "comment accéder à mattermost ?",
         ],
     },
+    # {
+    #     "id": "notion-fabrique",
+    #     "title": "Notion de la fabrique (partiel)",
+    #     "description": "Questions concernant le fonctionnement interne de la fabrique numérique des ministères sociaux et les personnes à contacter (SocialGouv)",
+    #     "url": "https://www.notion.so/fabnummas",
+    #     "get_url": get_notion_fabrique_url,
+    #     # "topics": [
+    #     #     "Questions sur la méthodologie startups d'état",
+    #     #     "Questions sur le fonctionnement, les outils pour gérer sa startup",
+    #     #     "Questions sur la communauté beta",
+    #     # ],
+    #     "path": "./content/notion-fabrique",
+    #     # "file_metadata": get_file_metadata,
+    #     "examples": [
+    #         #  "c'est quoi CSAPA ?",
+    #         #  "qui gere les sujets infrastructure a la fabrique ?"
+    #         # "que fait la fabrique ?",
+    #         # "comment est organisée la fabrique ?",
+    #         # "quelles sont les valeurs de la fabrique ?",
+    #         # "comment est dirigée fabrique ?",
+    #         # "commet sont selectionnées les projets de la fabrique ?",
+    #         # "quelle personne contacter pour des conseils sur la gestion mon produit ?",
+    #         # "quelle personne contacter pour des conseils techniques ?",
+    #         # "quelle personne contacter sur les questions d'homologations et de conformité ?",
+    #         # "quelle personne contacter sur les questions juridiques ?",
+    #     ],
+    # },
     # {
     #     "id": "incubators-beta",
     #     "title": "Incubateurs beta.gouv",

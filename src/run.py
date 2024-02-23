@@ -1,13 +1,13 @@
 import random
 import streamlit as st
-import chromadb
-import logging
-import sys
 
-from llama_index.vector_stores import ChromaVectorStore
-from llama_index import VectorStoreIndex
-from llama_index.chat_engine.types import ChatMode
-from sources import sources
+# import chromadb
+import logging
+# import sys
+
+# from llama_index.vector_stores import ChromaVectorStore
+# from llama_index import VectorStoreIndex
+from llama_index.core.chat_engine.types import ChatMode
 from index import index
 
 logger = logging.getLogger()
@@ -29,9 +29,6 @@ logger.setLevel(logging.DEBUG)
 
 # #index = load_data()
 
-sources_list = map(
-    lambda source: " - [{}]({})".format(source.get("title"), source.get("url")), sources
-)
 
 st.set_page_config(
     page_title="LlamaIndex + OpenAI + Markdown",
@@ -42,12 +39,10 @@ st.set_page_config(
 )
 st.header("LlamaIndex + OpenAI + Markdown")
 st.title(
-    "Interrogez la doc de la fabrique des ministères sociaux",
+    "Interrogez la doc de betagouv",
 )
 st.info(
-    "Détail des sources utilisées : \n\n{}\n\n:warning: Bot expérimental, retours bienvenus sur [sur GitHub](https://github.com/SocialGouv/ragga/issues/new)\n\nVoir des [exemples de réponses](https://pad.numerique.gouv.fr/751pO3ShQU-cZ3o-gQiYpA)".format(
-        "\n".join(sources_list)
-    ),
+    "Détail des sources utilisées : \n\n - doc.incubateur.net\n\n - beta.gouv.fr/startups\n\n:warning: Bot expérimental, retours bienvenus sur [sur GitHub](https://github.com/betagouv/ragga/issues/new)\n\n",
     icon="💡",
 )
 
@@ -55,7 +50,7 @@ if "messages" not in st.session_state.keys():  # Initialize the chat message his
     st.session_state.messages = [
         {
             "role": "assistant",
-            "content": "Bonjour, je suis l'assistant de la fabrique, posez-moi vos questions!",
+            "content": "Bonjour, je suis betabot, posez-moi vos questions!",
         }
     ]
 
@@ -65,7 +60,12 @@ if "chat_engine" not in st.session_state:
         chat_mode=ChatMode.CONTEXT,
         verbose=True,
         similarity_top_k=5,
-        system_prompt="Tu es un expert de la documentation de la fabrique numérique des ministères sociaux et tu réponds à des questionsen t'appuyant uniquement sur le contexte fourni et en ne faisant jamais appel à tes propres connaissances. Si tu cherches des contacts, cherches les contacts de la fabrique numérique des ministères sociaux en priorité",
+        system_prompt="""
+Tu es un expert de la documentation betagouv et tu réponds à des questions de manière structurée en t'appuyant uniquement sur le contexte fourni et en ne faisant jamais appel à tes propres connaissances.
+
+Quand des liens sont indiqués dans le contexte, propose les toujours à l'utilisateur en complément de ta réponse.
+
+Lorsqu'un contact est demandé, indiques le contact fourni dans le contexte""",
     )
     st.session_state["chat_engine"] = chat_engine
 
@@ -104,30 +104,30 @@ for message in st.session_state.messages:  # Display the prior chat messages
 #
 
 
-def get_source_link(description: str, filename):
-    source = [src for src in sources if src.get("description") == description]
-    if source:
-        get_url = source[0].get("get_url")
-        if get_url:
-            return get_url(description, filename)
-        return source[0].get("url")
-    return filename
+# def get_source_link(description: str, filename):
+#     source = [src for src in sources if src.get("description") == description]
+#     if source:
+#         get_url = source[0].get("get_url")
+#         if get_url:
+#             return get_url(description, filename)
+#         return source[0].get("url")
+#     return filename
 
 
-def get_source_links(source_nodes):
-    sources = filter(
-        lambda a: True,
-        set(
-            map(
-                lambda node: get_source_link(
-                    description=node.metadata.get("source"),
-                    filename=node.metadata.get("filename"),
-                ),
-                source_nodes,
-            )
-        ),
-    )
-    return "\n".join(map(lambda row: f" - {row}", sources))
+# def get_source_links(source_nodes):
+#     sources = filter(
+#         lambda a: True,
+#         set(
+#             map(
+#                 lambda node: get_source_link(
+#                     description=node.metadata.get("source"),
+#                     filename=node.metadata.get("filename"),
+#                 ),
+#                 source_nodes,
+#             )
+#         ),
+#     )
+#     return "\n".join(map(lambda row: f" - {row}", sources))
 
 
 if st.session_state.messages[-1]["role"] != "assistant":
@@ -137,18 +137,18 @@ if st.session_state.messages[-1]["role"] != "assistant":
             message_placeholder = st.empty()
             source_nodes = []
 
-            chat_engine = index.as_chat_engine(
-                chat_mode=ChatMode.CONTEXT,
-                verbose=True,
-                similarity_top_k=5,
-                system_prompt="""
-Tu es un expert de la documentation de la fabrique numérique des ministères sociaux et tu réponds à des questions en t'appuyant uniquement sur le contexte fourni et en ne faisant jamais appel à tes propres connaissances.
-Si tu cherches des contacts, cherches les contacts de la fabrique numérique des ministères sociaux en priorité
-Pour les questions techniques cherches dans la documentation SRE
-""",
-            )
+            #             chat_engine = index.as_chat_engine(
+            #                 chat_mode=ChatMode.CONTEXT,
+            #                 verbose=True,
+            #                 similarity_top_k=5,
+            #                 system_prompt="""
+            # Tu es un expert de la documentation de la fabrique numérique des ministères sociaux et tu réponds à des questions en t'appuyant uniquement sur le contexte fourni et en ne faisant jamais appel à tes propres connaissances.
+            # Si tu cherches des contacts, cherches les contacts de la fabrique numérique des ministères sociaux en priorité
+            # Pour les questions techniques cherches dans la documentation SRE
+            # """,
+            #             )
             if prompt:
-                streaming_response = chat_engine.stream_chat(prompt)
+                streaming_response = st.session_state["chat_engine"].stream_chat(prompt)
 
                 # streaming_response.print_response_stream()
 
@@ -159,11 +159,11 @@ Pour les questions techniques cherches dans la documentation SRE
                     full_response += text
                     message_placeholder.markdown(full_response)
 
-                # print(source_nodes)
-                str_sources = get_source_links(source_nodes)
-                if str_sources:
-                    full_response += "\n\nSources utilisées : \n\n" + str_sources
-                    message_placeholder.markdown(full_response)
+                    # print(source_nodes)
+                    # str_sources = get_source_links(source_nodes)
+                    # if str_sources:
+                    #     full_response += "\n\nSources utilisées : \n\n" + str_sources
+                message_placeholder.markdown(full_response)
                 # print("str_sources", str_sources)
                 #   full_response += f"\n\n{str_sources}"
                 st.session_state.messages.append(

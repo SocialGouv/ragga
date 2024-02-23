@@ -6,17 +6,19 @@ authors = ["Julien Bouquillon <julien.bouquillon@sg.social.gouv.fr>"]
 
 [tool.poetry.dependencies]
 python =  ">=3.11,<3.12"
-llama-index = "^0.8.59"
+llama-index = "^0.10.12"
 python-frontmatter = "^1.0.0"
 llama-cpp-python = "^0.2.11"
-chromadb = "^0.4.13"
-transformers = "^4.34.0"
+chromadb = "^0.4.22"
+transformers = "^4.38.1"
 torch = "^2.1.0"
 accelerate = "^0.23.0"
 safetensors = "^0.4.0"
 mypy = "^1.5.1"
-streamlit = "^1.28.1"
-openai = "^0.28.1"
+streamlit = "^1.31.1"
+openai = "^1.12.0"
+llama-index-readers-file = "^0.1.5"
+watchdog = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
